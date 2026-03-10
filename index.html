@@ -3,218 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LevelUp: Proactive Intelligence 🛡️</title>
+    <title>LevelUp: Apex OS 🛡️</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Press Start 2P', cursive; background: #0a0a0a; color: #fff; font-size: 8px; }
-        .pixel-border { border: 4px solid #fff; border-style: outset; background: #1a1a1a; }
-        .btn-pixel { background: #3b82f6; border-bottom: 4px solid #1e3a8a; padding: 10px; cursor: pointer; width: 100%; text-align: center; font-size: 5px; }
-        .btn-pixel:active { border-bottom: 0; margin-top: 4px; }
-        input, textarea, select { background: #111 !important; border: 2px solid #fff !important; color: #fff !important; padding: 8px; font-family: 'Press Start 2P'; font-size: 6px; width: 100%; outline: none; margin-bottom: 10px; }
-        .tab-content { display: none; }
-        .active-tab { display: block; }
-        .ia-response { background: #002244; border-left: 4px solid #3b82f6; padding: 10px; margin-top: 10px; font-size: 5px; line-height: 1.5; color: #aaddff; }
-        .ia-mission-alert { background: #3b1e00; border: 2px dashed #f59e0b; padding: 8px; margin-top: 10px; color: #fbbf24; animation: blink 2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        :root { --primary: #3b82f6; --accent: #00ffff; --bg: #030303; }
+        body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: #fff; font-size: 10px; }
+        .pixel-font { font-family: 'Press Start 2P', cursive; font-size: 6px; }
+        .glass { background: rgba(20, 20, 30, 0.7); border: 1px solid #333; backdrop-filter: blur(10px); border-radius: 12px; }
+        .neon-text { color: var(--accent); text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+        .tab-content { display: none; transition: 0.3s; }
+        .active-tab { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .btn-main { background: linear-gradient(135deg, #1e40af, #3b82f6); border-bottom: 4px solid #1e3a8a; font-weight: bold; transition: 0.1s; }
+        .btn-main:active { border-bottom: 0; transform: translateY(4px); }
     </style>
 </head>
-<body class="p-4 pb-32">
+<body class="p-4 pb-28">
 
-    <header class="pixel-border p-4 mb-4 flex gap-4 items-center">
-        <div id="avatar" class="w-16 h-16 bg-blue-900 flex items-center justify-center text-3xl border-4 border-white font-sans">👤</div>
-        <div class="flex-1">
-            <p id="display-name" class="text-blue-400 mb-1 uppercase">USUARIO</p>
-            <p id="display-job" class="text-[5px] text-gray-500 mb-2 uppercase italic">PROFESIÓN</p>
-            <div class="flex justify-between text-[6px] mb-1">
-                <span>LVL: <span id="lvl">1</span></span>
-                <span>ORO: <span id="oro" class="text-yellow-400">0</span>💰</span>
-            </div>
-            <div class="w-full bg-gray-800 h-2"><div id="xp-bar" class="bg-blue-400 h-full" style="width: 0%"></div></div>
-        </div>
-    </header>
-
-    <nav class="grid grid-cols-4 gap-1 mb-4">
-        <button onclick="tab('misiones')" class="bg-gray-800 p-2 text-[4px] border-b-2 border-white">TAREAS</button>
-        <button onclick="tab('logistica')" class="bg-gray-800 p-2 text-[4px] border-b-2 border-white">COSTOS</button>
-        <button onclick="tab('ia')" class="bg-blue-900 p-2 text-[4px] border-b-2 border-white font-bold text-blue-200">IA / CONSULTA</button>
-        <button onclick="tab('historial')" class="bg-gray-800 p-2 text-[4px] border-b-2 border-white">LOGS</button>
-    </nav>
-
-    <div id="tab-misiones" class="tab-content active-tab">
-        <div id="lista-misiones" class="space-y-2 mb-4"></div>
-        <input id="new-mision" type="text" placeholder="¿Qué toca hoy?">
-        <button onclick="addMision()" class="btn-pixel bg-blue-600">AÑADIR MISIÓN ⚔️</button>
-    </div>
-
-    <div id="tab-ia" class="tab-content">
-        <h2 class="text-blue-400 mb-4 text-[7px]">CENTRO DE INTELIGENCIA 🤖</h2>
-        
-        <div class="pixel-border p-3 mb-4">
-            <p class="text-[5px] mb-2">INVESTIGAR O CONSULTAR:</p>
-            <input id="ia-query" type="text" placeholder="Ej: ¿Cómo vender más?">
-            <button onclick="consultarIA()" class="btn-pixel bg-blue-800">CONSULTAR AL ORÁCULO</button>
-            <div id="ia-res-box" class="hidden ia-response"></div>
-            
-            <div id="ia-sugerencia" class="hidden ia-mission-alert">
-                <p class="text-[4px] font-bold mb-1">📢 MISIÓN SUGERIDA POR LA IA:</p>
-                <p id="sugerencia-texto" class="text-[5px] mb-2"></p>
-                <button id="btn-aceptar-sug" class="bg-yellow-600 p-1 text-[4px] border-b-2 border-yellow-900 w-full uppercase">Aceptar Reto</button>
-            </div>
-        </div>
-
-        <div class="pixel-border p-3 border-green-600">
-            <p class="text-[5px] mb-2 text-green-400">ASESOR DE RESPUESTAS A CLIENTES:</p>
-            <textarea id="msg-cliente" rows="3" placeholder="Pega el mensaje aquí..."></textarea>
-            <select id="tono-respuesta">
-                <option value="profesional">PROFESIONAL</option>
-                <option value="amigable">AMIGABLE / CERCANO</option>
-                <option value="urgente">CIERRE / URGENCIA</option>
+    <div id="setup" class="hidden flex flex-col items-center justify-center min-h-screen">
+        <div class="glass p-8 w-full max-w-xs border-2 border-blue-500">
+            <h1 class="pixel-font text-blue-400 mb-6 text-center">APEX INITIALIZATION</h1>
+            <input id="p-name-in" type="text" placeholder="OPERADOR" class="w-full bg-black border border-gray-700 p-2 mb-4">
+            <select id="p-job-in" class="w-full bg-black border border-gray-700 p-2 mb-4">
+                <option value="Gastronomía">GASTRONOMÍA</option>
+                <option value="Textil">TEXTIL / MODA</option>
+                <option value="Digital">DIGITAL / DISEÑO</option>
+                <option value="Técnico">SERVICIOS TÉCNICOS</option>
             </select>
-            <button onclick="generarRespuesta()" class="btn-pixel bg-green-700">REDACTAR RESPUESTA</button>
-            <div id="ia-sales-box" class="hidden ia-response" style="color: #afffaf; border-color: #22c55e;"></div>
+            <input id="p-rate-in" type="number" placeholder="VALOR HORA $" class="w-full bg-black border border-gray-700 p-2 mb-6">
+            <button onclick="configurarPerfil()" class="btn-main w-full p-3 uppercase">Activar Sistema</button>
         </div>
     </div>
 
-    <div id="tab-logistica" class="tab-content">
-        <h2 class="text-green-400 mb-4 text-[7px]">CALCULADORA DE PRECIOS</h2>
-        <div class="pixel-border p-3 space-y-2">
-            <p class="text-[4px]">INVERSIÓN O COSTO MATERIAL ($):</p>
-            <input id="costo-mat" type="number" oninput="calcPresupuesto()">
-            <p class="text-[4px]">% MARGEN DE UTILIDAD:</p>
-            <input id="pct-ganancia" type="number" value="40" oninput="calcPresupuesto()">
-            <div class="bg-black p-3 border-2 border-green-500 text-center">
-                <p class="text-[4px] text-green-500 mb-1">PRECIO DE VENTA SUGERIDO:</p>
-                <p id="precio-final" class="text-sm font-bold">$0.00</p>
+    <div id="dashboard" class="max-w-md mx-auto">
+        <header class="glass p-4 mb-4 flex items-center gap-4 border-l-4 border-blue-500">
+            <div class="w-12 h-12 bg-blue-900 rounded-lg flex items-center justify-center border border-blue-400">👤</div>
+            <div class="flex-1">
+                <div class="flex justify-between items-center mb-1">
+                    <span id="display-name" class="pixel-font text-[8px]">---</span>
+                    <span class="pixel-font text-yellow-400">LVL <span id="lvl">1</span></span>
+                </div>
+                <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="xp-bar" class="bg-blue-500 h-full" style="width: 0%"></div>
+                </div>
+                <p id="display-job" class="text-[6px] text-gray-500 mt-1 uppercase italic"></p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-4 gap-2 mb-4">
+            <button onclick="tab('misiones')" class="glass p-2 pixel-font text-[5px] text-center">MISIONES</button>
+            <button onclick="tab('costos')" class="glass p-2 pixel-font text-[5px] text-center">COSTOS</button>
+            <button onclick="tab('ia')" class="glass p-2 pixel-font text-[5px] text-center text-cyan-400">IA</button>
+            <button onclick="tab('stats')" class="glass p-2 pixel-font text-[5px] text-center text-green-400">STATS</button>
+        </div>
+
+        <div id="tab-misiones" class="tab-content active-tab">
+            <div id="lista-misiones" class="space-y-3 mb-4"></div>
+            <div class="glass p-4 border-dashed border-gray-600">
+                <input id="new-mision" type="text" placeholder="Definir nuevo objetivo..." class="w-full bg-transparent border-b border-gray-700 p-2 mb-4 outline-none">
+                <button onclick="addMision()" class="btn-main w-full p-2 text-[7px] uppercase">Registrar Misión</button>
             </div>
         </div>
-    </div>
 
-    <div id="tab-historial" class="tab-content">
-        <h2 class="text-yellow-400 mb-4 text-[7px]">REGISTRO DE VALOR</h2>
-        <div id="log-ganancias" class="space-y-2 text-[5px]"></div>
+        <div id="tab-costos" class="tab-content">
+            <h2 class="pixel-font text-green-400 mb-4">DESGLOSE DE MATERIALES</h2>
+            <div class="glass p-4 mb-4 space-y-3">
+                <input id="mat-nombre" type="text" placeholder="ITEM (Ejem: Harina/Tela)" class="w-full bg-black p-2 border border-gray-800">
+                <div class="grid grid-cols-2 gap-2">
+                    <input id="mat-costo" type="number" placeholder="COSTO $" class="bg-black p-2 border border-gray-800">
+                    <input id="mat-rinde" type="number" placeholder="RINDE (g/mt)" class="bg-black p-2 border border-gray-800">
+                </div>
+                <input id="mat-uso" type="number" placeholder="USO EN ESTE TRABAJO" class="w-full bg-black p-2 border border-gray-800">
+                <button onclick="addMaterial()" class="bg-green-700 w-full p-2 font-bold uppercase text-[8px] rounded">Sumar al Cálculo</button>
+            </div>
+            <div id="lista-materiales" class="space-y-2 mb-4"></div>
+            <div class="glass p-4 bg-green-900/10 border-green-500">
+                <div class="flex justify-between text-[8px] mb-2"><span>COSTO BASE:</span><span id="total-base">$0.00</span></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[8px]">MARGEN %:</span>
+                    <input id="calc-margen" type="number" value="40" oninput="recalcTotal()" class="w-16 bg-black border border-gray-700 p-1 text-center">
+                </div>
+                <div class="text-lg font-bold text-green-400 flex justify-between border-t border-green-900 pt-2">
+                    <span>PV FINAL:</span><span id="total-venta">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-ia" class="tab-content">
+            <div class="glass p-4 border-cyan-500 border">
+                <p class="pixel-font text-cyan-400 mb-4 animate-pulse">> IA ANALYZER ACTIVE</p>
+                <textarea id="ia-prompt" rows="3" placeholder="Pega mensaje de cliente o duda de negocio..." class="w-full bg-black p-3 border border-gray-800 mb-4 text-[9px]"></textarea>
+                <button onclick="superIA()" class="btn-main w-full p-3 text-[8px]">PROCESAR DATA</button>
+            </div>
+            <div id="ia-output" class="hidden mt-4 glass p-4 border-l-4 border-cyan-400 italic text-[8px] text-cyan-100"></div>
+        </div>
+
+        <div id="tab-stats" class="tab-content">
+            <div class="glass p-4 mb-4">
+                <h3 class="pixel-font text-green-400 mb-4 text-center">RENDIMIENTO SEMANAL</h3>
+                <canvas id="myChart"></canvas>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="glass p-3 text-center">
+                    <p class="text-[6px] text-gray-400 mb-1">CAPITAL ACUMULADO</p>
+                    <p class="text-xl font-bold text-yellow-500">$<span id="oro">0</span></p>
+                </div>
+                <div id="reversion-box" class="glass p-3 text-center border-orange-500 border">
+                    <p class="text-[6px] text-orange-400 mb-1">REINVERSIÓN (20%)</p>
+                    <p class="text-xl font-bold">$<span id="val-reversion">0</span></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('levelup-v3-data')) || {
-            nombre: "Usuario", oficio: "Profesional", rate: 10, lvl: 1, xp: 0, oro: 0, misiones: [], historial: []
+        let data = JSON.parse(localStorage.getItem('apex-v6-data')) || {
+            nombre: "", oficio: "", rate: 0, lvl: 1, xp: 0, oro: 0, misiones: [], historial: [], materiales: [],
+            chartData: [0, 0, 0, 0, 0, 0, 0] // 7 días
         };
 
-        // --- LÓGICA DE IA PROACTIVA ---
-        function consultarIA() {
-            const q = document.getElementById('ia-query').value.toLowerCase();
-            const resBox = document.getElementById('ia-res-box');
-            const sugBox = document.getElementById('ia-sugerencia');
-            const sugText = document.getElementById('sugerencia-texto');
-            
-            resBox.classList.remove('hidden');
-            resBox.innerText = "ANALIZANDO TENDENCIAS...";
+        let myChart;
 
+        window.onload = () => {
+            if(!data.nombre) document.getElementById('setup').classList.remove('hidden');
+            else {
+                document.getElementById('dashboard').classList.remove('hidden');
+                initChart();
+                updateUI();
+            }
+        };
+
+        function configurarPerfil() {
+            data.nombre = document.getElementById('p-name-in').value || "OPERADOR";
+            data.oficio = document.getElementById('p-job-in').value;
+            data.rate = parseFloat(document.getElementById('p-rate-in').value) || 10;
+            save(); location.reload();
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
+                    datasets: [{
+                        label: 'Ganancias $',
+                        data: data.chartData,
+                        borderColor: '#00ffff',
+                        backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        // --- CALCULADORA ---
+        function addMaterial() {
+            const n = document.getElementById('mat-nombre').value;
+            const c = parseFloat(document.getElementById('mat-costo').value);
+            const r = parseFloat(document.getElementById('mat-rinde').value);
+            const u = parseFloat(document.getElementById('mat-uso').value);
+            if(!n || isNaN(c)) return;
+            data.materiales.push({ n, p: (c/r)*u });
+            renderMateriales(); recalcTotal();
+            document.getElementById('mat-nombre').value = "";
+            document.getElementById('mat-costo').value = "";
+        }
+
+        function renderMateriales() {
+            document.getElementById('lista-materiales').innerHTML = data.materiales.map((m, i) => `
+                <div class="glass p-2 flex justify-between text-[8px] border-l-2 border-green-500">
+                    <span>${m.n}</span> <strong>$${m.p.toFixed(2)}</strong>
+                    <button onclick="data.materiales.splice(${i},1); renderMateriales(); recalcTotal();" class="text-red-500">×</button>
+                </div>
+            `).join('');
+        }
+
+        function recalcTotal() {
+            const base = data.materiales.reduce((acc, m) => acc + m.p, 0);
+            const m = parseFloat(document.getElementById('calc-margen').value) || 0;
+            const venta = base + (base * m/100);
+            document.getElementById('total-base').innerText = "$" + base.toFixed(2);
+            document.getElementById('total-venta').innerText = "$" + venta.toFixed(2);
+        }
+
+        // --- IA ---
+        function superIA() {
+            const p = document.getElementById('ia-prompt').value.toLowerCase();
+            const out = document.getElementById('ia-output');
+            out.classList.remove('hidden');
+            out.innerText = "PROCESANDO CONSULTA...";
             setTimeout(() => {
-                let r = "Para mejorar, enfócate en la calidad y en el seguimiento de tus clientes.";
-                let sug = "Realizar seguimiento a un cliente antiguo.";
-
-                if(q.includes("venta") || q.includes("vender")) {
-                    r = "La venta es psicología. Escucha el 80% y habla el 20%. Enfócate en beneficios, no solo en características.";
-                    sug = "Escribir a 3 prospectos nuevos hoy.";
-                } else if(q.includes("precio") || q.includes("dinero")) {
-                    r = "Nunca compitas por precio bajo, compite por valor alto. Si eres el más barato, siempre habrá alguien más barato que tú.";
-                    sug = "Revisar y ajustar lista de precios oficial.";
-                } else if(q.includes("diseño") || q.includes("creativo")) {
-                    r = "Lo simple siempre gana. Elimina elementos innecesarios hasta que solo quede lo esencial.";
-                    sug = "Organizar carpeta de recursos creativos.";
-                }
-
-                resBox.innerText = "ORÁCULO: " + r;
-                
-                // Mostrar sugerencia proactiva
-                sugText.innerText = sug;
-                sugBox.classList.remove('hidden');
-                document.getElementById('btn-aceptar-sug').onclick = () => {
-                    data.misiones.push({id: Date.now(), texto: "⭐ " + sug});
-                    sugBox.classList.add('hidden');
-                    save(); renderMisiones(); tab('misiones');
-                };
-            }, 1200);
+                let r = "ANALISIS: Enfócate en la post-venta. Un cliente que vuelve vale por 3 nuevos.";
+                if(p.includes("cliente")) r = "STRATEGY: Responde con validación. 'Entiendo tu punto, buscamos la mejor calidad para ti. ¿Qué ajuste te haría sentir más cómodo?'";
+                out.innerText = r;
+            }, 800);
         }
 
-        function generarRespuesta() {
-            const tono = document.getElementById('tono-respuesta').value;
-            const resBox = document.getElementById('ia-sales-box');
-            resBox.classList.remove('hidden');
-            let r = (tono === 'profesional') ? "Estimado/a, recibimos su consulta. Estamos revisando disponibilidad para brindarle la mejor solución. Le contactaremos en breve." : 
-                    (tono === 'amigable') ? "¡Hola! Qué gusto saludarte. Claro que sí, cuenta conmigo. Dame unos minutos y te paso toda la info que necesitas. ¡Saludos!" :
-                    "Hola. Te comento que nos quedan pocas unidades/cupos disponibles para esta semana. Si te interesa concretar, confírmame ahora para reservarte.";
-            resBox.innerText = "SUGERENCIA:\n" + r;
-        }
-
-        // --- SISTEMA BASE ---
-        function tab(t) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
-            document.getElementById('tab-' + t).classList.add('active-tab');
-        }
-
+        // --- CORE ---
         function addMision() {
-            const val = document.getElementById('new-mision').value;
-            if(!val) return;
-            data.misiones.push({id: Date.now(), texto: val});
+            const v = document.getElementById('new-mision').value;
+            if(!v) return;
+            data.misiones.push({id: Date.now(), texto: v});
             document.getElementById('new-mision').value = "";
             save(); renderMisiones();
         }
 
         function completar(id) {
-            const m = data.misiones.find(x => x.id === id);
-            const horas = prompt("¿Cuántas horas te tomó esta tarea?", "1");
-            if(horas === null) return;
+            const h = prompt("HORAS TRABAJADAS:", "1");
+            if(h === null) return;
+            const g = parseFloat(h) * data.rate;
+            data.oro += Math.round(g);
+            data.xp += 25;
             
-            const ganancia = parseFloat(horas) * data.rate;
-            data.oro += Math.round(ganancia);
-            data.xp += 20;
-            data.historial.push({ fecha: new Date().toLocaleTimeString(), tarea: m.texto, monto: ganancia.toFixed(2) });
+            // Actualizar Gráfica (Simplificado al día actual)
+            const diaSemana = (new Date().getDay() + 6) % 7;
+            data.chartData[diaSemana] += Math.round(g);
+            
             data.misiones = data.misiones.filter(x => x.id !== id);
-            
-            if(data.xp >= 100) { data.xp = 0; data.lvl++; alert("¡NIVEL ALCANZADO!"); }
+            if(data.xp >= 100) { data.xp = 0; data.lvl++; }
             save(); updateUI();
-        }
-
-        function renderMisiones() {
-            const l = document.getElementById('lista-misiones');
-            l.innerHTML = data.misiones.map(m => `
-                <div class="pixel-border p-2 flex justify-between items-center bg-gray-900 text-[5px] mb-2">
-                    <span>${m.texto}</span>
-                    <button onclick="completar(${m.id})" class="bg-green-700 p-1 px-2 border-b-2 border-green-900">LISTO</button>
-                </div>
-            `).join('');
+            if(myChart) { myChart.data.datasets[0].data = data.chartData; myChart.update(); }
         }
 
         function updateUI() {
             document.getElementById('display-name').innerText = data.nombre;
             document.getElementById('display-job').innerText = data.oficio;
+            document.getElementById('oro').innerText = data.oro.toLocaleString();
+            document.getElementById('val-reversion').innerText = (data.oro * 0.2).toFixed(2);
             document.getElementById('lvl').innerText = data.lvl;
-            document.getElementById('oro').innerText = data.oro;
             document.getElementById('xp-bar').style.width = data.xp + "%";
             renderMisiones();
-            renderHistorial();
+            renderMateriales();
+            recalcTotal();
         }
 
-        function renderHistorial() {
-            const h = document.getElementById('log-ganancias');
-            h.innerHTML = data.historial.slice().reverse().map(log => `
-                <div class="border-l-2 border-yellow-600 pl-2 mb-2">
-                    <p class="text-yellow-600">[${log.fecha}]</p>
-                    <p>${log.tarea} (+$${log.monto})</p>
+        function renderMisiones() {
+            document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `
+                <div class="glass p-3 flex justify-between items-center border-l-4 border-blue-500">
+                    <span class="text-[8px] font-bold">${m.texto}</span>
+                    <button onclick="completar(${m.id})" class="btn-main p-1 px-4 text-[6px] rounded">CERRAR</button>
                 </div>
             `).join('');
         }
 
-        function calcPresupuesto() {
-            const c = parseFloat(document.getElementById('costo-mat').value) || 0;
-            const p = parseFloat(document.getElementById('pct-ganancia').value) || 0;
-            document.getElementById('precio-final').innerText = "$" + (c + (c * p/100)).toFixed(2);
+        function tab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+            document.getElementById('tab-' + t).classList.add('active-tab');
         }
 
-        function save() { localStorage.setItem('levelup-v3-data', JSON.stringify(data)); }
-        updateUI();
+        function save() { localStorage.setItem('apex-v6-data', JSON.stringify(data)); }
     </script>
 </body>
 </html>
