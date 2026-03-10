@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mastermind v33 CORREGIDA ⚡💎</title>
+    <title>Mastermind v34 💡 Guía Flotante</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
@@ -92,6 +92,26 @@
             background: rgba(255,255,255,0.2) !important;
             border-color: white;
         }
+
+        /* ESTILO PARA LOS TIPS FLOTANTES */
+        .info-tip {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid #3b82f6;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 10px;
+            color: #a5b4fc;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .info-tip i {
+            font-size: 18px;
+            color: #3b82f6;
+        }
     </style>
 </head>
 <body class="p-4 pb-44">
@@ -115,7 +135,7 @@
         <div class="progress-bar"><div id="meta-fill" class="progress-fill" style="width: 0%"></div></div>
     </header>
 
-    <!-- NAV (con animación) -->
+    <!-- NAV -->
     <nav class="grid grid-cols-4 gap-2 mb-6">
         <button onclick="tab('misiones')" class="nav-btn glass p-3 text-[7px] font-bold uppercase">📋 Proyectos</button>
         <button onclick="tab('cobranza')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-red-400">⚖️ Cobros</button>
@@ -129,6 +149,11 @@
 
     <!-- PESTAÑA MISIONES -->
     <div id="tab-misiones" class="tab-content active-tab theme-misiones">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>📋 Proyectos:</strong> Registra los trabajos que inicias. Al finalizar, podrás cobrarlos.<br>Ej: "Diseño de logo para cliente"</span>
+        </div>
         <div class="ia-box">
             <p class="text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1">🤖 Mastermind IA - Status</p>
             <p id="ia-inicio" class="text-[10px] italic">Escaneando deudores y metas...</p>
@@ -140,8 +165,13 @@
         </div>
     </div>
 
-    <!-- PESTAÑA COBRANZA (con formulario directo) -->
+    <!-- PESTAÑA COBRANZA -->
     <div id="tab-cobranza" class="tab-content theme-cobranza">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>⚖️ Cobros:</strong> Gestiona deudas. Agrega deudores directo o desde proyectos. Usa Pago Total o Abono.<br>Ej: "Juan Pérez debe $500 por consultoría"</span>
+        </div>
         <h2 class="text-xs font-bold text-red-400 uppercase mb-4 italic">⚠️ Facturas Pendientes</h2>
         
         <div class="glass p-5 mb-4">
@@ -157,6 +187,11 @@
 
     <!-- PESTAÑA ESPÍA -->
     <div id="tab-espia" class="tab-content theme-espia">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>🕵️ Espía:</strong> Analiza competencia. Registra sus precios y productos para recibir consejos.<br>Ej: "Competencia X vende zapatos a $80"</span>
+        </div>
         <div class="ia-box border-cyan-500">
             <p class="text-[8px] font-black text-cyan-400 uppercase tracking-widest mb-1">🕵️ IA Espía - Análisis</p>
             <p id="ia-espia-consejo" class="text-[10px] italic text-cyan-100">Registra un competidor para ver el consejo táctico.</p>
@@ -172,6 +207,11 @@
 
     <!-- PESTAÑA CEREBRO -->
     <div id="tab-brain" class="tab-content theme-brain">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>🧠 Cerebro:</strong> Consulta al asistente para redactar mensajes, estrategias o investigar.<br>Ej: "Escribe un mensaje para recordar un pago"</span>
+        </div>
         <h2 class="text-xs font-bold text-purple-400 uppercase mb-4 italic">🧠 Central de Consultas</h2>
         <div class="glass p-5">
             <select id="brain-mode">
@@ -185,8 +225,13 @@
         </div>
     </div>
 
-    <!-- PESTAÑA CALCULADORA CON BOTONES NEON (CORREGIDA) -->
+    <!-- PESTAÑA CALCULADORA -->
     <div id="tab-calc" class="tab-content theme-calc">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>📊 Cotizar:</strong> Calcula precio de venta según costos (insumos) y margen de ganancia.<br>Ej: Insumos $100, Ganancia 30% = $130</span>
+        </div>
         <div class="glass p-5">
             <div class="bg-black/50 p-4 rounded-2xl mb-4 text-right">
                 <p id="calc-display" class="text-3xl font-bold text-green-400">0</p>
@@ -228,6 +273,11 @@
 
     <!-- PESTAÑA BÓVEDA -->
     <div id="tab-boveda" class="tab-content theme-boveda">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>💰 Bóveda:</strong> Registra gastos personales, de empresa o ingresos extras. La gráfica muestra proporciones.<br>Ej: Compra de café (personal), pago hosting (empresa), venta de mueble (ingreso extra)</span>
+        </div>
         <h2 class="text-xs font-bold text-yellow-500 mb-4 uppercase italic">💰 Caja Chica y Gráfica</h2>
         
         <div class="glass p-4 mb-4">
@@ -255,6 +305,11 @@
 
     <!-- PESTAÑA META -->
     <div id="tab-meta" class="tab-content theme-meta">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>🎯 Meta:</strong> Define un objetivo financiero para visualizar tu progreso.<br>Ej: "Comprar laptop" con meta $1500</span>
+        </div>
         <h2 class="text-xs font-bold text-blue-500 mb-4 uppercase italic">Ajustar Meta</h2>
         <div class="glass p-5">
             <input id="m-n" placeholder="Nombre de la meta">
@@ -265,6 +320,11 @@
 
     <!-- PESTAÑA ALARMAS -->
     <div id="tab-more" class="tab-content theme-more">
+        <!-- TIP FLOTANTE -->
+        <div class="info-tip">
+            <span>ℹ️</span>
+            <span><strong>⏰ Alarmas:</strong> Crea recordatorios con fecha y hora para no olvidar tareas.<br>Ej: "Reunión con proveedor" 2025-04-15 10:00</span>
+        </div>
         <h2 class="text-xs font-bold text-orange-500 mb-4 px-2 uppercase italic">📅 Agenda y Recordatorios</h2>
         <div class="glass p-5 mb-4">
             <input id="a-d" placeholder="¿Qué hay que hacer?">
@@ -279,7 +339,7 @@
 
     <script>
         // DATA ESTRUCTURA
-        let data = JSON.parse(localStorage.getItem('biz-god-v33')) || {
+        let data = JSON.parse(localStorage.getItem('biz-god-v34')) || {
             gananciaBase: 0,
             metaNombre: "Sin Meta", metaValor: 0,
             misiones: [], 
@@ -289,13 +349,11 @@
             boveda: []
         };
 
-        // ===== FUNCIÓN DE PESTAÑAS (AHORA SÍ FUNCIONA) =====
         function tab(t) { 
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab')); 
             document.getElementById('tab-' + t).classList.add('active-tab'); 
         }
 
-        // ===== INICIALIZACIÓN =====
         window.onload = () => { 
             updateUI(); 
             renderMisiones(); 
@@ -305,9 +363,8 @@
             renderBoveda(); 
             runIA(); 
         };
-        function save() { localStorage.setItem('biz-god-v33', JSON.stringify(data)); }
+        function save() { localStorage.setItem('biz-god-v34', JSON.stringify(data)); }
 
-        // ===== IA INICIO =====
         function runIA() {
             const ia = document.getElementById('ia-inicio');
             let msj = "";
@@ -329,7 +386,6 @@
             ia.innerHTML = msj;
         }
 
-        // ===== GANANCIA NETA =====
         function getGananciaNeta() {
             const totalIngresosExtra = data.boveda.filter(t => t.tipo === 'ingreso').reduce((a,b)=>a+b.monto,0);
             const totalGastosPersonales = data.boveda.filter(t => t.tipo === 'personal').reduce((a,b)=>a+b.monto,0);
@@ -337,7 +393,7 @@
             return (data.gananciaBase + totalIngresosExtra) - (totalGastosPersonales + totalGastosEmpresa);
         }
 
-        // ===== MISIONES =====
+        // MISIONES
         function addMision() {
             const v = document.getElementById('new-mision').value; if(!v) return;
             data.misiones.push({id: Date.now(), t: v});
@@ -360,7 +416,7 @@
             save(); updateUI(); renderMisiones(); renderDeudas(); runIA();
         }
 
-        // ===== REGISTRAR DEUDOR DIRECTO =====
+        // REGISTRAR DEUDOR DIRECTO
         function registrarDeudorDirecto() {
             const nombre = document.getElementById('nuevo-deudor-nombre').value;
             const monto = parseFloat(document.getElementById('nuevo-deudor-monto').value);
@@ -388,7 +444,7 @@
             runIA();
         }
 
-        // ===== COBRANZA =====
+        // COBRANZA
         function renderDeudas() {
             document.getElementById('lista-cobranza').innerHTML = data.deudas.map(d => `
                 <div class="glass p-4 border-l-4 border-red-500 mb-2">
@@ -425,7 +481,7 @@
             save(); updateUI(); renderDeudas(); renderBoveda(); runIA();
         }
 
-        // ===== ESPÍA =====
+        // ESPÍA
         function addSpy() {
             const n = document.getElementById('spy-negocio').value;
             const it = document.getElementById('spy-item').value;
@@ -445,7 +501,7 @@
                 </div>`).join('');
         }
 
-        // ===== CEREBRO =====
+        // CEREBRO
         function askBrain() {
             const q = document.getElementById('brain-query').value;
             const r = document.getElementById('brain-response');
@@ -457,10 +513,10 @@
             }, 800);
         }
 
-        // ===== CALCULADORA NEON (CORREGIDA: sin conflicto de nombres) =====
+        // CALCULADORA
         let calcCurrent = '0';
-        let calcStoredValue = null;      // antes era calcOperator (variable)
-        let calcPendingOp = null;        // antes era calcOperator (función)
+        let calcStoredValue = null;
+        let calcPendingOp = null;
 
         function updateCalcDisplay() {
             document.getElementById('calc-display').innerText = calcCurrent;
@@ -518,7 +574,7 @@
             }
         }
 
-        // ===== COTIZADOR =====
+        // COTIZADOR
         function generarCotizacion() {
             const c = parseFloat(document.getElementById('calc-costo').value);
             const m = parseFloat(document.getElementById('calc-margen').value);
@@ -528,7 +584,7 @@
             calcCurrent = total.toFixed(2);
         }
 
-        // ===== BÓVEDA =====
+        // BÓVEDA
         function registrarTransaccion() {
             const tipo = document.getElementById('tipo-transaccion').value;
             const desc = document.getElementById('boveda-desc').value;
@@ -558,7 +614,7 @@
             document.getElementById('bar-ingreso').style.width = (totalIngreso / maximo * 100) + '%';
         }
 
-        // ===== ALARMAS =====
+        // ALARMAS
         function addAlarma() {
             const d = document.getElementById('a-d').value;
             const f = document.getElementById('a-fecha').value;
@@ -575,14 +631,14 @@
                 </div>`).join('');
         }
 
-        // ===== META =====
+        // META
         function setMeta() {
             data.metaNombre = document.getElementById('m-n').value;
             data.metaValor = parseFloat(document.getElementById('m-v').value);
             save(); updateUI(); runIA();
         }
 
-        // ===== UPDATE UI =====
+        // UPDATE UI
         function updateUI() {
             const neta = getGananciaNeta();
             document.getElementById('ganancia-neta').innerText = neta.toFixed(2);
