@@ -3,146 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survival Hero RPG 🛡️</title>
+    <title>Survival Hero: Pro Master 🛡️</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Press Start 2P', cursive; background: #0a0a0a; color: #fff; font-size: 8px; }
         .pixel-border { border: 4px solid #fff; border-style: outset; background: #1a1a1a; }
-        .stat-bar { height: 12px; border: 2px solid #000; transition: width 0.5s; }
-        .btn-pixel { background: #3b82f6; border-bottom: 4px solid #1e3a8a; padding: 10px; cursor: pointer; }
+        .stat-bar { height: 12px; border: 2px solid #000; }
+        .btn-pixel { background: #3b82f6; border-bottom: 4px solid #1e3a8a; padding: 10px; cursor: pointer; width: 100%; text-align: center; font-size: 6px; }
         .btn-pixel:active { border-bottom: 0; margin-top: 4px; }
-        .avatar-box { width: 80px; height: 80px; image-rendering: pixelated; }
+        input, select { background: #111 !important; border: 2px solid #fff !important; color: #fff !important; padding: 8px; font-family: 'Press Start 2P'; font-size: 6px; width: 100%; outline: none; }
+        .modal { background: rgba(0,0,0,0.9); display: none; position: fixed; top:0; left:0; width:100%; height:100%; z-index:100; justify-content: center; items-center: center; padding: 20px; }
     </style>
 </head>
-<body class="p-4 pb-24">
+<body class="p-4 pb-32">
 
-    <header class="pixel-border p-4 mb-4 flex gap-4 items-center">
-        <div id="avatar" class="avatar-box bg-blue-900 flex items-center justify-center text-4xl border-4 border-white">
-            👤
-        </div>
-        <div class="flex-1">
-            <p id="p-name" class="mb-2 text-blue-400">HEROE</p>
-            <p class="mb-1">LVL: <span id="lvl">1</span></p>
-            <div class="w-full bg-gray-800 h-2 mb-2"><div id="xp-bar" class="bg-blue-400 h-full" style="width: 0%"></div></div>
-            <p class="text-yellow-400">ORO: <span id="oro">0</span>💰</p>
-        </div>
-    </header>
-
-    <div class="pixel-border p-3 mb-4 grid grid-cols-2 gap-4">
-        <div>
-            <p class="mb-1 text-cyan-400">SED 💧</p>
-            <div class="stat-bar bg-gray-900"><div id="bar-sed" class="bg-cyan-500 h-full" style="width: 100%"></div></div>
-        </div>
-        <div>
-            <p class="mb-1 text-orange-400">HAMBRE 🍖</p>
-            <div class="stat-bar bg-gray-900"><div id="bar-hambre" class="bg-orange-500 h-full" style="width: 100%"></div></div>
+    <div id="setup" class="flex flex-col items-center justify-center min-h-screen text-center p-4">
+        <h1 class="text-blue-500 mb-6 text-sm">CONFIGURAR AVATAR</h1>
+        <div class="pixel-border p-6 w-full space-y-4">
+            <input id="p-name-in" type="text" placeholder="NOMBRE">
+            <select id="p-job-in">
+                <option value="Diseñador Gráfico 🎨">DISEÑADOR 🎨</option>
+                <option value="DJ Productor 🎧">DJ PRODUCTOR 🎧</option>
+                <option value="Emprendedor 👕">DUEÑO MARCA 👕</option>
+            </select>
+            <p class="text-[5px] text-gray-400">¿CUÁNTO VALE TU HORA DE TRABAJO ($)?</p>
+            <input id="p-rate-in" type="number" placeholder="Ej: 10">
+            <button onclick="configurarPerfil()" class="btn-pixel bg-green-600">INICIAR AVENTURA</button>
         </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-2 mb-6">
-        <button onclick="cuidar('agua')" class="btn-pixel text-[6px] bg-blue-700">BEBER AGUA 🥤</button>
-        <button onclick="cuidar('comida')" class="btn-pixel text-[6px] bg-orange-700">COMER ALGO 🍎</button>
-    </div>
+    <div id="dashboard" class="hidden">
+        <header class="pixel-border p-4 mb-4 flex gap-4 items-center">
+            <div id="avatar" class="w-16 h-16 bg-blue-900 flex items-center justify-center text-3xl border-4 border-white">👤</div>
+            <div class="flex-1">
+                <p id="display-name" class="text-blue-400 mb-1">---</p>
+                <p id="display-job" class="text-[5px] text-gray-500 mb-2">---</p>
+                <p class="mb-1">LVL: <span id="lvl">1</span> | ORO: <span id="oro" class="text-yellow-400">0</span>💰</p>
+                <div class="w-full bg-gray-800 h-2"><div id="xp-bar" class="bg-blue-400 h-full" style="width: 0%"></div></div>
+            </div>
+        </header>
 
-    <nav class="flex gap-2 mb-4">
-        <button onclick="tab('quests')" class="bg-gray-700 p-2 flex-1">MISIÓN</button>
-        <button onclick="tab('shop')" class="bg-gray-700 p-2 flex-1">TIENDA</button>
-    </nav>
+        <div class="pixel-border p-3 mb-4 bg-blue-900/20 border-blue-500">
+            <p class="text-[5px] text-blue-400 mb-2">🤖 EVALUADOR IA:</p>
+            <p id="ia-advice" class="text-[6px] italic leading-relaxed">"Esperando reportes de trabajo..."</p>
+        </div>
 
-    <div id="tab-quests" class="tab-content">
-        <h2 class="text-blue-300 mb-4">MISIONES SECUNDARIAS ⚔️</h2>
-        <div id="lista-secundarias" class="space-y-2 mb-6">
-            <div class="pixel-border p-2 flex justify-between items-center bg-gray-800">
-                <span>TAREA 5 MIN</span>
-                <button onclick="ganar(10, 2)" class="bg-green-600 p-1 text-[5px]">OK</button>
+        <nav class="grid grid-cols-2 gap-2 mb-4">
+            <button onclick="tab('misiones')" class="bg-gray-800 p-2 text-[6px]">MISIONES</button>
+            <button onclick="tab('logistica')" class="bg-gray-800 p-2 text-[6px]">LOGÍSTICA</button>
+        </nav>
+
+        <div id="tab-misiones">
+            <div id="lista-misiones" class="space-y-2 mb-4"></div>
+            <input id="new-mision" type="text" placeholder="¿Qué harás hoy?" class="mb-2">
+            <button onclick="addMision()" class="btn-pixel bg-blue-600">AÑADIR TAREA ⚔️</button>
+        </div>
+
+        <div id="tab-logistica" class="hidden">
+            <h2 class="text-green-400 mb-4 text-[7px]">PRESUPUESTOS 📈</h2>
+            <div class="pixel-border p-3 space-y-4">
+                <input id="costo-mat" type="number" placeholder="MATERIALES $" oninput="calcPresupuesto()">
+                <input id="pct-ganancia" type="number" value="50" oninput="calcPresupuesto()">
+                <div class="bg-black p-2 border-2 border-green-500">
+                    <p class="text-[5px]">PRECIO FINAL:</p>
+                    <p id="precio-final" class="text-sm font-bold">$0.00</p>
+                </div>
             </div>
         </div>
-        <input id="new-q" type="text" placeholder="Nueva misión..." class="w-full bg-gray-900 p-2 mb-2 border-2 border-gray-700 outline-none">
-        <button onclick="addQ()" class="w-full btn-pixel bg-blue-600 mb-4 font-bold">AÑADIR RETO +</button>
+
+        <div class="fixed bottom-0 left-0 w-full p-4 bg-black border-t-4 border-white flex gap-2">
+            <button onclick="cuidar('agua')" class="btn-pixel bg-cyan-900">BEBER 💧</button>
+            <button onclick="cuidar('comida')" class="btn-pixel bg-orange-900">COMER 🍖</button>
+        </div>
     </div>
 
-    <div id="tab-shop" class="tab-content hidden">
-        <h2 class="text-yellow-400 mb-4">TIENDA DE ARMADURA 🛡️</h2>
-        <div class="space-y-3">
-            <div class="pixel-border p-2 flex justify-between items-center">
-                <span>CASCO HIERRO</span>
-                <button onclick="comprar('🪖', 50)" class="bg-yellow-600 p-1">50💰</button>
-            </div>
-            <div class="pixel-border p-2 flex justify-between items-center">
-                <span>ESCUDO LUZ</span>
-                <button onclick="comprar('🛡️', 100)" class="bg-yellow-600 p-1">100💰</button>
-            </div>
-            <div class="pixel-border p-2 flex justify-between items-center">
-                <span>ESPADA FUEGO</span>
-                <button onclick="comprar('🔥', 200)" class="bg-yellow-600 p-1">200💰</button>
-            </div>
+    <div id="modal-eval" class="modal flex flex-col items-center">
+        <div class="pixel-border p-6 w-full max-w-xs text-center space-y-4 bg-black">
+            <p class="text-blue-400">CIERRE DE MISIÓN</p>
+            <p id="eval-tarea-nombre" class="text-[7px]">Tarea</p>
+            <p class="text-[5px]">¿CUÁNTAS HORAS TE TOMÓ?</p>
+            <input id="eval-horas" type="number" step="0.5" placeholder="Ej: 1.5">
+            <button onclick="finalizarEvaluacion()" class="btn-pixel bg-yellow-600">CALCULAR BOTÍN 💰</button>
         </div>
-        <div id="inventario" class="mt-4 text-gray-500">EQUIPADO: Ninguno</div>
     </div>
 
     <script>
-        let state = JSON.parse(localStorage.getItem('hero-data')) || {
-            lvl: 1, xp: 0, oro: 0, sed: 100, hambre: 100, equipo: [], items: ""
+        let data = JSON.parse(localStorage.getItem('rpg-pro-data')) || {
+            nombre: "", oficio: "", rate: 0, lvl: 1, xp: 0, oro: 0, sed: 100, hambre: 100, misiones: []
+        };
+        let m_actual = null;
+
+        window.onload = () => {
+            if(data.nombre) {
+                document.getElementById('setup').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                updateUI();
+            }
         };
 
-        // Reducción automática de supervivencia cada 30 min (simulado más rápido para prueba)
-        setInterval(() => {
-            state.sed = Math.max(0, state.sed - 1);
-            state.hambre = Math.max(0, state.hambre - 0.5);
-            updateUI();
-        }, 60000); 
+        function configurarPerfil() {
+            data.nombre = document.getElementById('p-name-in').value || "HEROE";
+            data.oficio = document.getElementById('p-job-in').value;
+            data.rate = parseFloat(document.getElementById('p-rate-in').value) || 5;
+            save(); location.reload();
+        }
+
+        function addMision() {
+            const val = document.getElementById('new-mision').value;
+            if(!val) return;
+            data.misiones.push({id: Date.now(), texto: val});
+            document.getElementById('new-mision').value = "";
+            save(); renderMisiones();
+        }
+
+        function abrirEvaluacion(id) {
+            m_actual = data.misiones.find(m => m.id === id);
+            document.getElementById('eval-tarea-nombre').innerText = m_actual.texto;
+            document.getElementById('modal-eval').style.display = 'flex';
+        }
+
+        function finalizarEvaluacion() {
+            const horas = parseFloat(document.getElementById('eval-horas').value) || 0.1;
+            const ganancia = horas * data.rate;
+            
+            data.oro += Math.round(ganancia);
+            data.xp += 25;
+            data.misiones = data.misiones.filter(m => m.id !== m_actual.id);
+            
+            document.getElementById('modal-eval').style.display = 'none';
+            document.getElementById('eval-horas').value = "";
+            
+            if(data.xp >= 100) { data.xp = 0; data.lvl++; alert("✨ NIVEL UP!"); }
+            
+            document.getElementById('ia-advice').innerText = `"${m_actual.texto}" evaluado. Basado en ${horas}h a $${data.rate}/h, has generado $${ganancia.toFixed(2)} de botín real.`;
+            
+            save(); updateUI();
+        }
 
         function updateUI() {
-            document.getElementById('lvl').innerText = state.lvl;
-            document.getElementById('oro').innerText = state.oro;
-            document.getElementById('xp-bar').style.width = state.xp + "%";
-            document.getElementById('bar-sed').style.width = state.sed + "%";
-            document.getElementById('bar-hambre').style.width = state.hambre + "%";
-            document.getElementById('avatar').innerText = state.sed < 20 ? "😵" : (state.items || "👤");
-            if(state.sed < 10) document.getElementById('avatar').classList.add('bg-red-900');
-            else document.getElementById('avatar').classList.remove('bg-red-900');
-            localStorage.setItem('hero-data', JSON.stringify(state));
+            document.getElementById('display-name').innerText = data.nombre;
+            document.getElementById('display-job').innerText = data.oficio;
+            document.getElementById('lvl').innerText = data.lvl;
+            document.getElementById('oro').innerText = data.oro;
+            document.getElementById('xp-bar').style.width = data.xp + "%";
+            renderMisiones();
         }
 
-        function cuidar(tipo) {
-            if(tipo === 'agua') state.sed = Math.min(100, state.sed + 30);
-            if(tipo === 'comida') state.hambre = Math.min(100, state.hambre + 40);
-            updateUI();
-        }
-
-        function ganar(xp, oro) {
-            state.xp += xp;
-            state.oro += oro;
-            if(state.xp >= 100) { state.xp = 0; state.lvl++; alert("¡LEVEL UP! ✨"); }
-            updateUI();
-        }
-
-        function comprar(emoji, precio) {
-            if(state.oro >= precio) {
-                state.oro -= precio;
-                state.items = emoji;
-                document.getElementById('inventario').innerText = "EQUIPADO: " + emoji;
-                updateUI();
-            } else { alert("¡No tienes suficiente oro!"); }
+        function renderMisiones() {
+            const l = document.getElementById('lista-misiones');
+            l.innerHTML = data.misiones.map(m => `
+                <div class="pixel-border p-2 flex justify-between items-center bg-gray-900 text-[6px]">
+                    <span>${m.texto}</span>
+                    <button onclick="abrirEvaluacion(${m.id})" class="bg-green-600 p-1">COMPLETAR</button>
+                </div>
+            `).join('');
         }
 
         function tab(t) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('[id^="tab-"]').forEach(c => c.classList.add('hidden'));
             document.getElementById('tab-' + t).classList.remove('hidden');
         }
 
-        function addQ() {
-            const val = document.getElementById('new-q').value;
-            if(!val) return;
-            const div = document.createElement('div');
-            div.className = "pixel-border p-2 flex justify-between items-center bg-gray-800 mb-2";
-            div.innerHTML = `<span>${val}</span><button onclick="this.parentElement.remove(); ganar(25, 10)" class="bg-green-600 p-1 text-[5px]">OK</button>`;
-            document.getElementById('lista-secundarias').appendChild(div);
-            document.getElementById('new-q').value = "";
+        function calcPresupuesto() {
+            const c = parseFloat(document.getElementById('costo-mat').value) || 0;
+            const p = parseFloat(document.getElementById('pct-ganancia').value) || 0;
+            document.getElementById('precio-final').innerText = "$" + (c + (c * p/100)).toFixed(2);
         }
 
-        updateUI();
+        function save() { localStorage.setItem('rpg-pro-data', JSON.stringify(data)); }
     </script>
 </body>
 </html>
