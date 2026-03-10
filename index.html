@@ -3,110 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survival Hero: Pro Master 🛡️</title>
+    <title>LevelUp: Proactive Intelligence 🛡️</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Press Start 2P', cursive; background: #0a0a0a; color: #fff; font-size: 8px; }
         .pixel-border { border: 4px solid #fff; border-style: outset; background: #1a1a1a; }
-        .stat-bar { height: 12px; border: 2px solid #000; }
-        .btn-pixel { background: #3b82f6; border-bottom: 4px solid #1e3a8a; padding: 10px; cursor: pointer; width: 100%; text-align: center; font-size: 6px; }
+        .btn-pixel { background: #3b82f6; border-bottom: 4px solid #1e3a8a; padding: 10px; cursor: pointer; width: 100%; text-align: center; font-size: 5px; }
         .btn-pixel:active { border-bottom: 0; margin-top: 4px; }
-        input, select { background: #111 !important; border: 2px solid #fff !important; color: #fff !important; padding: 8px; font-family: 'Press Start 2P'; font-size: 6px; width: 100%; outline: none; }
-        .modal { background: rgba(0,0,0,0.9); display: none; position: fixed; top:0; left:0; width:100%; height:100%; z-index:100; justify-content: center; items-center: center; padding: 20px; }
+        input, textarea, select { background: #111 !important; border: 2px solid #fff !important; color: #fff !important; padding: 8px; font-family: 'Press Start 2P'; font-size: 6px; width: 100%; outline: none; margin-bottom: 10px; }
+        .tab-content { display: none; }
+        .active-tab { display: block; }
+        .ia-response { background: #002244; border-left: 4px solid #3b82f6; padding: 10px; margin-top: 10px; font-size: 5px; line-height: 1.5; color: #aaddff; }
+        .ia-mission-alert { background: #3b1e00; border: 2px dashed #f59e0b; padding: 8px; margin-top: 10px; color: #fbbf24; animation: blink 2s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
 <body class="p-4 pb-32">
 
-    <div id="setup" class="flex flex-col items-center justify-center min-h-screen text-center p-4">
-        <h1 class="text-blue-500 mb-6 text-sm">CONFIGURAR AVATAR</h1>
-        <div class="pixel-border p-6 w-full space-y-4">
-            <input id="p-name-in" type="text" placeholder="NOMBRE">
-            <select id="p-job-in">
-                <option value="Diseñador Gráfico 🎨">DISEÑADOR 🎨</option>
-                <option value="DJ Productor 🎧">DJ PRODUCTOR 🎧</option>
-                <option value="Emprendedor 👕">DUEÑO MARCA 👕</option>
+    <header class="pixel-border p-4 mb-4 flex gap-4 items-center">
+        <div id="avatar" class="w-16 h-16 bg-blue-900 flex items-center justify-center text-3xl border-4 border-white font-sans">👤</div>
+        <div class="flex-1">
+            <p id="display-name" class="text-blue-400 mb-1 uppercase">USUARIO</p>
+            <p id="display-job" class="text-[5px] text-gray-500 mb-2 uppercase italic">PROFESIÓN</p>
+            <div class="flex justify-between text-[6px] mb-1">
+                <span>LVL: <span id="lvl">1</span></span>
+                <span>ORO: <span id="oro" class="text-yellow-400">0</span>💰</span>
+            </div>
+            <div class="w-full bg-gray-800 h-2"><div id="xp-bar" class="bg-blue-400 h-full" style="width: 0%"></div></div>
+        </div>
+    </header>
+
+    <nav class="grid grid-cols-4 gap-1 mb-4">
+        <button onclick="tab('misiones')" class="bg-gray-800 p-2 text-[4px] border-b-2 border-white">TAREAS</button>
+        <button onclick="tab('logistica')" class="bg-gray-800 p-2 text-[4px] border-b-2 border-white">COSTOS</button>
+        <button onclick="tab('ia')" class="bg-blue-900 p-2 text-[4px] border-b-2 border-white font-bold text-blue-200">IA / CONSULTA</button>
+        <button onclick="tab('historial')" class="bg-gray-800 p-2 text-[4px] border-b-2 border-white">LOGS</button>
+    </nav>
+
+    <div id="tab-misiones" class="tab-content active-tab">
+        <div id="lista-misiones" class="space-y-2 mb-4"></div>
+        <input id="new-mision" type="text" placeholder="¿Qué toca hoy?">
+        <button onclick="addMision()" class="btn-pixel bg-blue-600">AÑADIR MISIÓN ⚔️</button>
+    </div>
+
+    <div id="tab-ia" class="tab-content">
+        <h2 class="text-blue-400 mb-4 text-[7px]">CENTRO DE INTELIGENCIA 🤖</h2>
+        
+        <div class="pixel-border p-3 mb-4">
+            <p class="text-[5px] mb-2">INVESTIGAR O CONSULTAR:</p>
+            <input id="ia-query" type="text" placeholder="Ej: ¿Cómo vender más?">
+            <button onclick="consultarIA()" class="btn-pixel bg-blue-800">CONSULTAR AL ORÁCULO</button>
+            <div id="ia-res-box" class="hidden ia-response"></div>
+            
+            <div id="ia-sugerencia" class="hidden ia-mission-alert">
+                <p class="text-[4px] font-bold mb-1">📢 MISIÓN SUGERIDA POR LA IA:</p>
+                <p id="sugerencia-texto" class="text-[5px] mb-2"></p>
+                <button id="btn-aceptar-sug" class="bg-yellow-600 p-1 text-[4px] border-b-2 border-yellow-900 w-full uppercase">Aceptar Reto</button>
+            </div>
+        </div>
+
+        <div class="pixel-border p-3 border-green-600">
+            <p class="text-[5px] mb-2 text-green-400">ASESOR DE RESPUESTAS A CLIENTES:</p>
+            <textarea id="msg-cliente" rows="3" placeholder="Pega el mensaje aquí..."></textarea>
+            <select id="tono-respuesta">
+                <option value="profesional">PROFESIONAL</option>
+                <option value="amigable">AMIGABLE / CERCANO</option>
+                <option value="urgente">CIERRE / URGENCIA</option>
             </select>
-            <p class="text-[5px] text-gray-400">¿CUÁNTO VALE TU HORA DE TRABAJO ($)?</p>
-            <input id="p-rate-in" type="number" placeholder="Ej: 10">
-            <button onclick="configurarPerfil()" class="btn-pixel bg-green-600">INICIAR AVENTURA</button>
+            <button onclick="generarRespuesta()" class="btn-pixel bg-green-700">REDACTAR RESPUESTA</button>
+            <div id="ia-sales-box" class="hidden ia-response" style="color: #afffaf; border-color: #22c55e;"></div>
         </div>
     </div>
 
-    <div id="dashboard" class="hidden">
-        <header class="pixel-border p-4 mb-4 flex gap-4 items-center">
-            <div id="avatar" class="w-16 h-16 bg-blue-900 flex items-center justify-center text-3xl border-4 border-white">👤</div>
-            <div class="flex-1">
-                <p id="display-name" class="text-blue-400 mb-1">---</p>
-                <p id="display-job" class="text-[5px] text-gray-500 mb-2">---</p>
-                <p class="mb-1">LVL: <span id="lvl">1</span> | ORO: <span id="oro" class="text-yellow-400">0</span>💰</p>
-                <div class="w-full bg-gray-800 h-2"><div id="xp-bar" class="bg-blue-400 h-full" style="width: 0%"></div></div>
+    <div id="tab-logistica" class="tab-content">
+        <h2 class="text-green-400 mb-4 text-[7px]">CALCULADORA DE PRECIOS</h2>
+        <div class="pixel-border p-3 space-y-2">
+            <p class="text-[4px]">INVERSIÓN O COSTO MATERIAL ($):</p>
+            <input id="costo-mat" type="number" oninput="calcPresupuesto()">
+            <p class="text-[4px]">% MARGEN DE UTILIDAD:</p>
+            <input id="pct-ganancia" type="number" value="40" oninput="calcPresupuesto()">
+            <div class="bg-black p-3 border-2 border-green-500 text-center">
+                <p class="text-[4px] text-green-500 mb-1">PRECIO DE VENTA SUGERIDO:</p>
+                <p id="precio-final" class="text-sm font-bold">$0.00</p>
             </div>
-        </header>
-
-        <div class="pixel-border p-3 mb-4 bg-blue-900/20 border-blue-500">
-            <p class="text-[5px] text-blue-400 mb-2">🤖 EVALUADOR IA:</p>
-            <p id="ia-advice" class="text-[6px] italic leading-relaxed">"Esperando reportes de trabajo..."</p>
-        </div>
-
-        <nav class="grid grid-cols-2 gap-2 mb-4">
-            <button onclick="tab('misiones')" class="bg-gray-800 p-2 text-[6px]">MISIONES</button>
-            <button onclick="tab('logistica')" class="bg-gray-800 p-2 text-[6px]">LOGÍSTICA</button>
-        </nav>
-
-        <div id="tab-misiones">
-            <div id="lista-misiones" class="space-y-2 mb-4"></div>
-            <input id="new-mision" type="text" placeholder="¿Qué harás hoy?" class="mb-2">
-            <button onclick="addMision()" class="btn-pixel bg-blue-600">AÑADIR TAREA ⚔️</button>
-        </div>
-
-        <div id="tab-logistica" class="hidden">
-            <h2 class="text-green-400 mb-4 text-[7px]">PRESUPUESTOS 📈</h2>
-            <div class="pixel-border p-3 space-y-4">
-                <input id="costo-mat" type="number" placeholder="MATERIALES $" oninput="calcPresupuesto()">
-                <input id="pct-ganancia" type="number" value="50" oninput="calcPresupuesto()">
-                <div class="bg-black p-2 border-2 border-green-500">
-                    <p class="text-[5px]">PRECIO FINAL:</p>
-                    <p id="precio-final" class="text-sm font-bold">$0.00</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="fixed bottom-0 left-0 w-full p-4 bg-black border-t-4 border-white flex gap-2">
-            <button onclick="cuidar('agua')" class="btn-pixel bg-cyan-900">BEBER 💧</button>
-            <button onclick="cuidar('comida')" class="btn-pixel bg-orange-900">COMER 🍖</button>
         </div>
     </div>
 
-    <div id="modal-eval" class="modal flex flex-col items-center">
-        <div class="pixel-border p-6 w-full max-w-xs text-center space-y-4 bg-black">
-            <p class="text-blue-400">CIERRE DE MISIÓN</p>
-            <p id="eval-tarea-nombre" class="text-[7px]">Tarea</p>
-            <p class="text-[5px]">¿CUÁNTAS HORAS TE TOMÓ?</p>
-            <input id="eval-horas" type="number" step="0.5" placeholder="Ej: 1.5">
-            <button onclick="finalizarEvaluacion()" class="btn-pixel bg-yellow-600">CALCULAR BOTÍN 💰</button>
-        </div>
+    <div id="tab-historial" class="tab-content">
+        <h2 class="text-yellow-400 mb-4 text-[7px]">REGISTRO DE VALOR</h2>
+        <div id="log-ganancias" class="space-y-2 text-[5px]"></div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('rpg-pro-data')) || {
-            nombre: "", oficio: "", rate: 0, lvl: 1, xp: 0, oro: 0, sed: 100, hambre: 100, misiones: []
-        };
-        let m_actual = null;
-
-        window.onload = () => {
-            if(data.nombre) {
-                document.getElementById('setup').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                updateUI();
-            }
+        let data = JSON.parse(localStorage.getItem('levelup-v3-data')) || {
+            nombre: "Usuario", oficio: "Profesional", rate: 10, lvl: 1, xp: 0, oro: 0, misiones: [], historial: []
         };
 
-        function configurarPerfil() {
-            data.nombre = document.getElementById('p-name-in').value || "HEROE";
-            data.oficio = document.getElementById('p-job-in').value;
-            data.rate = parseFloat(document.getElementById('p-rate-in').value) || 5;
-            save(); location.reload();
+        // --- LÓGICA DE IA PROACTIVA ---
+        function consultarIA() {
+            const q = document.getElementById('ia-query').value.toLowerCase();
+            const resBox = document.getElementById('ia-res-box');
+            const sugBox = document.getElementById('ia-sugerencia');
+            const sugText = document.getElementById('sugerencia-texto');
+            
+            resBox.classList.remove('hidden');
+            resBox.innerText = "ANALIZANDO TENDENCIAS...";
+
+            setTimeout(() => {
+                let r = "Para mejorar, enfócate en la calidad y en el seguimiento de tus clientes.";
+                let sug = "Realizar seguimiento a un cliente antiguo.";
+
+                if(q.includes("venta") || q.includes("vender")) {
+                    r = "La venta es psicología. Escucha el 80% y habla el 20%. Enfócate en beneficios, no solo en características.";
+                    sug = "Escribir a 3 prospectos nuevos hoy.";
+                } else if(q.includes("precio") || q.includes("dinero")) {
+                    r = "Nunca compitas por precio bajo, compite por valor alto. Si eres el más barato, siempre habrá alguien más barato que tú.";
+                    sug = "Revisar y ajustar lista de precios oficial.";
+                } else if(q.includes("diseño") || q.includes("creativo")) {
+                    r = "Lo simple siempre gana. Elimina elementos innecesarios hasta que solo quede lo esencial.";
+                    sug = "Organizar carpeta de recursos creativos.";
+                }
+
+                resBox.innerText = "ORÁCULO: " + r;
+                
+                // Mostrar sugerencia proactiva
+                sugText.innerText = sug;
+                sugBox.classList.remove('hidden');
+                document.getElementById('btn-aceptar-sug').onclick = () => {
+                    data.misiones.push({id: Date.now(), texto: "⭐ " + sug});
+                    sugBox.classList.add('hidden');
+                    save(); renderMisiones(); tab('misiones');
+                };
+            }, 1200);
+        }
+
+        function generarRespuesta() {
+            const tono = document.getElementById('tono-respuesta').value;
+            const resBox = document.getElementById('ia-sales-box');
+            resBox.classList.remove('hidden');
+            let r = (tono === 'profesional') ? "Estimado/a, recibimos su consulta. Estamos revisando disponibilidad para brindarle la mejor solución. Le contactaremos en breve." : 
+                    (tono === 'amigable') ? "¡Hola! Qué gusto saludarte. Claro que sí, cuenta conmigo. Dame unos minutos y te paso toda la info que necesitas. ¡Saludos!" :
+                    "Hola. Te comento que nos quedan pocas unidades/cupos disponibles para esta semana. Si te interesa concretar, confírmame ahora para reservarte.";
+            resBox.innerText = "SUGERENCIA:\n" + r;
+        }
+
+        // --- SISTEMA BASE ---
+        function tab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+            document.getElementById('tab-' + t).classList.add('active-tab');
         }
 
         function addMision() {
@@ -117,28 +162,29 @@
             save(); renderMisiones();
         }
 
-        function abrirEvaluacion(id) {
-            m_actual = data.misiones.find(m => m.id === id);
-            document.getElementById('eval-tarea-nombre').innerText = m_actual.texto;
-            document.getElementById('modal-eval').style.display = 'flex';
+        function completar(id) {
+            const m = data.misiones.find(x => x.id === id);
+            const horas = prompt("¿Cuántas horas te tomó esta tarea?", "1");
+            if(horas === null) return;
+            
+            const ganancia = parseFloat(horas) * data.rate;
+            data.oro += Math.round(ganancia);
+            data.xp += 20;
+            data.historial.push({ fecha: new Date().toLocaleTimeString(), tarea: m.texto, monto: ganancia.toFixed(2) });
+            data.misiones = data.misiones.filter(x => x.id !== id);
+            
+            if(data.xp >= 100) { data.xp = 0; data.lvl++; alert("¡NIVEL ALCANZADO!"); }
+            save(); updateUI();
         }
 
-        function finalizarEvaluacion() {
-            const horas = parseFloat(document.getElementById('eval-horas').value) || 0.1;
-            const ganancia = horas * data.rate;
-            
-            data.oro += Math.round(ganancia);
-            data.xp += 25;
-            data.misiones = data.misiones.filter(m => m.id !== m_actual.id);
-            
-            document.getElementById('modal-eval').style.display = 'none';
-            document.getElementById('eval-horas').value = "";
-            
-            if(data.xp >= 100) { data.xp = 0; data.lvl++; alert("✨ NIVEL UP!"); }
-            
-            document.getElementById('ia-advice').innerText = `"${m_actual.texto}" evaluado. Basado en ${horas}h a $${data.rate}/h, has generado $${ganancia.toFixed(2)} de botín real.`;
-            
-            save(); updateUI();
+        function renderMisiones() {
+            const l = document.getElementById('lista-misiones');
+            l.innerHTML = data.misiones.map(m => `
+                <div class="pixel-border p-2 flex justify-between items-center bg-gray-900 text-[5px] mb-2">
+                    <span>${m.texto}</span>
+                    <button onclick="completar(${m.id})" class="bg-green-700 p-1 px-2 border-b-2 border-green-900">LISTO</button>
+                </div>
+            `).join('');
         }
 
         function updateUI() {
@@ -148,21 +194,17 @@
             document.getElementById('oro').innerText = data.oro;
             document.getElementById('xp-bar').style.width = data.xp + "%";
             renderMisiones();
+            renderHistorial();
         }
 
-        function renderMisiones() {
-            const l = document.getElementById('lista-misiones');
-            l.innerHTML = data.misiones.map(m => `
-                <div class="pixel-border p-2 flex justify-between items-center bg-gray-900 text-[6px]">
-                    <span>${m.texto}</span>
-                    <button onclick="abrirEvaluacion(${m.id})" class="bg-green-600 p-1">COMPLETAR</button>
+        function renderHistorial() {
+            const h = document.getElementById('log-ganancias');
+            h.innerHTML = data.historial.slice().reverse().map(log => `
+                <div class="border-l-2 border-yellow-600 pl-2 mb-2">
+                    <p class="text-yellow-600">[${log.fecha}]</p>
+                    <p>${log.tarea} (+$${log.monto})</p>
                 </div>
             `).join('');
-        }
-
-        function tab(t) {
-            document.querySelectorAll('[id^="tab-"]').forEach(c => c.classList.add('hidden'));
-            document.getElementById('tab-' + t).classList.remove('hidden');
         }
 
         function calcPresupuesto() {
@@ -171,7 +213,8 @@
             document.getElementById('precio-final').innerText = "$" + (c + (c * p/100)).toFixed(2);
         }
 
-        function save() { localStorage.setItem('rpg-pro-data', JSON.stringify(data)); }
+        function save() { localStorage.setItem('levelup-v3-data', JSON.stringify(data)); }
+        updateUI();
     </script>
 </body>
 </html>
