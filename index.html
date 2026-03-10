@@ -3,202 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Business Control v27 🌍</title>
+    <title>Global Business Control v28 🛡️🌍</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'JetBrains Mono', monospace; background: #010103; color: #fff; min-height: 100vh; }
-        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 24px; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        body { font-family: 'JetBrains Mono', monospace; background: #010103; color: #fff; min-height: 100vh; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 24px; transition: 0.3s; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .active-tab { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
-        input, select { background: rgba(20, 20, 35, 0.8) !important; border: 1px solid #3b82f644 !important; color: #fff !important; padding: 12px; border-radius: 12px; font-size: 10px; width: 100%; margin-bottom: 10px; }
-        .btn-action { background: linear-gradient(135deg, #1e40af, #7e22ce); padding: 15px; border-radius: 15px; font-weight: 800; text-transform: uppercase; font-size: 9px; width: 100%; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        
+        input { background: rgba(20, 20, 35, 0.8) !important; border: 1px solid #3b82f644 !important; color: #fff !important; padding: 14px; border-radius: 16px; font-size: 11px; width: 100%; }
+        .btn-calc { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 14px; font-weight: bold; font-size: 16px; }
+        .btn-calc:active { background: #3b82f6; box-shadow: 0 0 15px #3b82f6; }
+        .btn-action { background: linear-gradient(135deg, #1e40af, #7e22ce); padding: 18px; border-radius: 20px; font-weight: 800; text-transform: uppercase; font-size: 10px; cursor: pointer; }
+        .ia-box { background: linear-gradient(90deg, rgba(30, 64, 175, 0.1), rgba(126, 34, 206, 0.1)); border: 1px dashed #7e22ce; padding: 15px; border-radius: 20px; margin-bottom: 20px; }
+        .progress-bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); transition: 0.8s ease-in-out; }
     </style>
 </head>
-<body class="p-4 pb-32">
+<body class="p-4 pb-44">
 
-    <div class="glass p-4 mb-6 border-dashed border-indigo-500 border">
-        <p id="ia-consejo" class="text-[10px] text-indigo-300 italic">"Analizando flujo global..."</p>
+    <div class="ia-box">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="text-xl">🧠</span>
+            <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest italic text-white">Asistente de Estrategia Global</p>
+        </div>
+        <p id="ia-consejo" class="text-[10px] text-gray-300 leading-relaxed italic">"Analizando estado de cuentas..."</p>
     </div>
 
-    <header class="glass p-5 mb-6 border-b-2 border-indigo-600">
-        <div class="grid grid-cols-2 gap-4">
-            <div><p class="text-[7px] uppercase font-bold text-gray-400">Capital Real</p><p class="text-2xl font-bold">$<span id="ganancia-total">0</span></p></div>
-            <div class="text-right"><p class="text-[7px] uppercase font-bold text-red-400">Por Cobrar</p><p class="text-2xl font-bold text-red-400">$<span id="total-deuda">0</span></p></div>
+    <header class="glass p-6 mb-4 border-b-2 border-indigo-600/50">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <p class="text-[7px] text-indigo-400 font-bold uppercase tracking-widest">Capital Real</p>
+                <p class="text-3xl font-bold text-white">$<span id="ganancia-total">0.00</span></p>
+            </div>
+            <div class="text-right">
+                <p class="text-[7px] text-red-500 font-bold uppercase tracking-widest italic">Cuentas por Cobrar</p>
+                <p class="text-3xl font-bold text-red-400">$<span id="total-deuda">0.00</span></p>
+            </div>
         </div>
+        <div class="flex justify-between text-[8px] font-bold mb-1 uppercase text-gray-400">
+            <span>Meta de Facturación: $<span id="meta-val">1000</span></span>
+            <span><span id="meta-percent">0</span>%</span>
+        </div>
+        <div class="progress-bar"><div id="meta-fill" class="progress-fill" style="width: 0%"></div></div>
     </header>
 
-    <nav class="grid grid-cols-4 gap-2 mb-6">
-        <button onclick="tab('misiones')" class="glass p-3 text-[7px] font-bold">📋 ORDENES</button>
-        <button onclick="tab('cobranza')" class="glass p-3 text-[7px] font-bold text-red-400">⚖️ COBROS</button>
-        <button onclick="tab('boveda')" class="glass p-3 text-[7px] font-bold text-yellow-400">💰 BOVEDA</button>
-        <button onclick="tab('clientes')" class="glass p-3 text-[7px] font-bold text-pink-400">👥 AGENDA</button>
-        <button onclick="tab('meta')" class="glass p-3 text-[7px] font-bold text-blue-400">🎯 METAS</button>
-        <button onclick="tab('espia')" class="glass p-3 text-[7px] font-bold text-cyan-400">🕵️ ESPIA</button>
-        <button onclick="tab('more')" class="glass p-3 text-[7px] font-bold text-orange-400">⏰ ALARMAS</button>
-        <button onclick="tab('calc')" class="glass p-3 text-[7px] font-bold text-green-400">📊 CALC</button>
+    <nav class="grid grid-cols-4 gap-2 mb-6 text-center">
+        <button onclick="tab('misiones')" class="glass p-3 text-[7px] font-bold uppercase text-white italic">📋 Ordenes</button>
+        <button onclick="tab('cobranza')" class="glass p-3 text-[7px] font-bold uppercase text-red-400 italic">⚖️ Cobranza</button>
+        <button onclick="tab('calc')" class="glass p-3 text-[7px] font-bold uppercase text-green-400 italic">📊 Cotizar</button>
+        <button onclick="tab('boveda')" class="glass p-3 text-[7px] font-bold uppercase text-yellow-400 italic">💰 Bóveda</button>
+        <button onclick="tab('clientes')" class="glass p-3 text-[7px] font-bold uppercase text-pink-400 italic">👥 Agenda</button>
+        <button onclick="tab('meta')" class="glass p-3 text-[7px] font-bold uppercase text-blue-400">🎯 Metas</button>
+        <button onclick="tab('espia')" class="glass p-3 text-[7px] font-bold uppercase text-cyan-400">🕵️ Espía</button>
+        <button onclick="tab('more')" class="glass p-3 text-[7px] font-bold uppercase text-orange-400">⏰ Alarmas</button>
     </nav>
 
-    <div id="tab-boveda" class="tab-content">
-        <h2 class="text-xs font-bold mb-4 text-yellow-500">HISTORIAL DE GASTOS / SALIDAS</h2>
-        <div class="glass p-4 mb-4">
-            <input id="gasto-desc" placeholder="Motivo del gasto (Ej: Alquiler, Material)">
-            <input id="gasto-monto" type="number" placeholder="Monto $">
-            <button onclick="registrarGasto()" class="btn-action bg-yellow-600">Registrar Salida 💸</button>
+    <div id="tab-misiones" class="tab-content active-tab">
+        <div id="lista-misiones" class="space-y-3 mb-6"></div>
+        <div class="glass p-5 border-blue-500/20">
+            <input id="new-mision" type="text" placeholder="Nueva Orden (Ej: Diseño de Logo / Pedido de Ropa)">
+            <button onclick="addMision()" class="btn-action w-full mt-3">Registrar Orden de Trabajo 🛠️</button>
         </div>
-        <div id="lista-gastos" class="space-y-2"></div>
+    </div>
+
+    <div id="tab-cobranza" class="tab-content">
+        <p class="text-[9px] font-bold text-red-400 uppercase mb-3 text-center underline italic">⚠️ Cuentas por Cobrar Pendientes</p>
+        <div id="lista-cobranza" class="space-y-3"></div>
+    </div>
+
+    <div id="tab-calc" class="tab-content">
+        <div class="glass p-5 mb-4 border-green-500/20 text-center">
+            <div class="bg-black/50 p-4 rounded-2xl mb-4 border border-white/5 text-right">
+                <p id="calc-display" class="text-3xl font-bold text-green-400">$0.00</p>
+                <p class="text-[7px] text-green-400/50 uppercase">Precio de Venta Sugerido</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <div><input id="calc-costo" type="number" placeholder="Costo Material $"><p class="text-[7px] text-gray-500 mt-1 italic">Costo Operativo</p></div>
+                <div><input id="calc-margen" type="number" placeholder="Ganancia %"><p class="text-[7px] text-gray-500 mt-1 italic">Margen de Beneficio</p></div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 mb-4">
+                <button onclick="addNum('7')" class="btn-calc">7</button><button onclick="addNum('8')" class="btn-calc">8</button><button onclick="addNum('9')" class="btn-calc">9</button><button onclick="clearCalc()" class="btn-calc text-red-500">C</button>
+                <button onclick="addNum('4')" class="btn-calc">4</button><button onclick="addNum('5')" class="btn-calc">5</button><button onclick="addNum('6')" class="btn-calc">6</button><button onclick="addOp('*')" class="btn-calc text-blue-400">×</button>
+                <button onclick="addNum('1')" class="btn-calc">1</button><button onclick="addNum('2')" class="btn-calc">2</button><button onclick="addNum('3')" class="btn-calc">3</button><button onclick="addOp('-')" class="btn-calc text-blue-400">-</button>
+                <button onclick="addNum('0')" class="btn-calc">0</button><button onclick="addNum('.')" class="btn-calc">.</button><button onclick="exeCalc()" class="btn-calc bg-green-600/20 col-span-2 text-white font-bold">=</button>
+            </div>
+            
+            <button onclick="generarCotizacion()" class="btn-action w-full bg-green-700">Calcular Final 🚀</button>
+            <div id="intro-calc" class="hidden mt-4 p-3 bg-white/5 rounded-xl text-[8px] text-gray-300 leading-tight">
+                ℹ️ Esta herramienta suma tus costos (material, tiempo, luz) y aplica tu margen de ganancia para asegurar que tu negocio sea rentable.
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-boveda" class="tab-content">
+        <h2 class="text-xs font-bold mb-4 text-yellow-500">CONTROL DE GASTOS 💰</h2>
+        <div class="glass p-4 mb-4">
+            <input id="gasto-desc" placeholder="Descripción del Gasto" class="mb-2">
+            <input id="gasto-monto" type="number" placeholder="Monto $" class="mb-3">
+            <button onclick="registrarGasto()" class="btn-action bg-yellow-600">Deducir Capital 💸</button>
+        </div>
+        <div id="lista-logs" class="space-y-2"></div>
     </div>
 
     <div id="tab-clientes" class="tab-content">
-        <h2 class="text-xs font-bold mb-4 text-pink-500">DIRECTORIO DE CLIENTES</h2>
+        <h2 class="text-xs font-bold mb-4 text-pink-500 uppercase">Directorio de Clientes 👥</h2>
         <div class="glass p-4 mb-4">
-            <input id="cliente-nombre" placeholder="Nombre Completo">
-            <input id="cliente-tel" placeholder="WhatsApp (Ej: +58...)">
-            <button onclick="addCliente()" class="btn-action">Guardar en Agenda 👥</button>
+            <input id="cliente-nombre" placeholder="Nombre" class="mb-2">
+            <input id="cliente-tel" placeholder="Número WhatsApp" class="mb-3">
+            <button onclick="addCliente()" class="btn-action bg-pink-800">Guardar Contacto</button>
         </div>
         <div id="lista-clientes" class="space-y-2"></div>
     </div>
 
     <div id="tab-meta" class="tab-content">
-        <h2 class="text-xs font-bold mb-4 text-blue-500">OBJETIVOS DEL MES</h2>
+        <h2 class="text-xs font-bold mb-4 text-blue-500">CONFIGURACIÓN DE OBJETIVOS 🎯</h2>
         <div class="glass p-6 text-center">
-            <p class="text-[9px] mb-2 text-gray-400">¿CUÁNTO QUIERES GANAR?</p>
-            <input id="meta-input" type="number" placeholder="Ej: 5000" class="text-center text-xl">
-            <button onclick="setMeta()" class="btn-action">Actualizar Meta 🎯</button>
-            <div class="mt-6">
-                <p id="meta-status" class="text-[10px]"></p>
-                <div class="h-4 bg-white/10 rounded-full mt-2"><div id="meta-bar" class="h-full bg-blue-500 rounded-full w-0 transition-all"></div></div>
-            </div>
+            <input id="meta-input" type="number" placeholder="Meta del mes $" class="text-center text-xl mb-4">
+            <button onclick="setMeta()" class="btn-action bg-blue-700">Actualizar Meta 🚀</button>
         </div>
     </div>
 
     <div id="tab-espia" class="tab-content">
-        <h2 class="text-xs font-bold mb-4 text-cyan-500">INTELIGENCIA DE MERCADO</h2>
+        <h2 class="text-xs font-bold mb-4 text-cyan-500">VIGILANCIA DE COMPETENCIA 🕵️</h2>
         <div class="glass p-4 mb-4">
-            <input id="espia-negocio" placeholder="Nombre de la Competencia">
-            <input id="espia-producto" placeholder="Producto que venden">
-            <input id="espia-precio" type="number" placeholder="Su precio $">
-            <button onclick="addEspia()" class="btn-action bg-cyan-700">Guardar Dato 🕵️</button>
+            <input id="spy-negocio" placeholder="Negocio Competidor" class="mb-2">
+            <input id="spy-precio" type="number" placeholder="Su Precio $" class="mb-3">
+            <button onclick="addSpy()" class="btn-action bg-cyan-800">Guardar Inteligencia</button>
         </div>
-        <div id="lista-espia" class="space-y-2 text-[9px]"></div>
+        <div id="lista-espia" class="space-y-2"></div>
     </div>
 
     <div id="tab-more" class="tab-content">
-        <h2 class="text-xs font-bold mb-4 text-orange-500">RECORDATORIOS DE ENTREGA</h2>
-        <div class="glass p-4 mb-4 text-center">
-            <p class="text-[9px] text-gray-400 mb-4 italic text-left">Nota: Esto ayuda a organizar tus tiempos de producción.</p>
-            <input id="alarma-nota" placeholder="¿Qué hay que entregar?">
-            <input id="alarma-hora" type="time">
-            <button onclick="setAlarma()" class="btn-action bg-orange-600">Programar Entrega ⏰</button>
+        <h2 class="text-xs font-bold mb-4 text-orange-500">RECORDATORIOS DE PRODUCCIÓN ⏰</h2>
+        <div class="glass p-4 mb-4">
+            <input id="alarm-desc" placeholder="Tarea a entregar" class="mb-2">
+            <input id="alarm-time" type="time" class="mb-3">
+            <button onclick="addAlarma()" class="btn-action bg-orange-700">Crear Alarma</button>
         </div>
         <div id="lista-alarmas" class="space-y-2"></div>
     </div>
 
-    <div id="tab-misiones" class="tab-content active-tab"><div id="lista-misiones" class="space-y-2"></div><div class="glass p-4 mt-4"><input id="new-mision" placeholder="Nueva Orden..."><button onclick="addMision()" class="btn-action">Crear 🛠️</button></div></div>
-    <div id="tab-cobranza" class="tab-content"><div id="lista-cobranza" class="space-y-2"></div></div>
-    <div id="tab-calc" class="tab-content"> </div>
-
     <script>
-        let data = JSON.parse(localStorage.getItem('biz-global-v27')) || {
-            ganancia: 0, meta: 1000,
-            misiones: [], deudas: [], gastos: [], clientes: [], espia: [], alarmas: []
+        let data = JSON.parse(localStorage.getItem('biz-global-v28')) || {
+            ganancia: 0, gastoTotal: 0, meta: 1000,
+            misiones: [], deudas: [], logs: [], clientes: [], espia: [], alarmas: []
         };
 
-        window.onload = () => { renderAll(); updateUI(); runIA(); };
+        window.onload = () => { updateUI(); renderMisiones(); renderDeudas(); renderLogs(); renderClientes(); renderSpy(); renderAlarmas(); runIA(); };
 
-        function save() { localStorage.setItem('biz-global-v27', JSON.stringify(data)); }
+        function save() { localStorage.setItem('biz-global-v28', JSON.stringify(data)); }
 
         function tab(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
             document.getElementById('tab-' + t).classList.add('active-tab');
         }
 
-        // FUNCIONES ACTIVADAS
-        function registrarGasto() {
-            const d = document.getElementById('gasto-desc').value;
-            const m = parseFloat(document.getElementById('gasto-monto').value);
-            if(!d || isNaN(m)) return;
-            data.ganancia -= m;
-            data.gastos.unshift({desc: d, monto: m, fecha: new Date().toLocaleDateString()});
-            save(); renderAll(); updateUI();
-        }
-
-        function addCliente() {
-            const n = document.getElementById('cliente-nombre').value;
-            const t = document.getElementById('cliente-tel').value;
-            if(!n || !t) return;
-            data.clientes.push({nombre: n, tel: t});
-            save(); renderAll();
-        }
-
-        function setMeta() {
-            const m = parseFloat(document.getElementById('meta-input').value);
-            if(isNaN(m)) return;
-            data.meta = m;
-            save(); updateUI();
-        }
-
-        function addEspia() {
-            const n = document.getElementById('espia-negocio').value;
-            const p = document.getElementById('espia-producto').value;
-            const pr = document.getElementById('espia-precio').value;
-            if(!n || !p || !pr) return;
-            data.espia.push({negocio: n, prod: p, precio: pr});
-            save(); renderAll();
-        }
-
-        function setAlarma() {
-            const n = document.getElementById('alarma-nota').value;
-            const h = document.getElementById('alarma-hora').value;
-            if(!n || !h) return;
-            data.alarmas.push({nota: n, hora: h});
-            save(); renderAll();
-        }
-
-        function renderAll() {
-            // Render Gastos
-            document.getElementById('lista-gastos').innerHTML = data.gastos.map(g => `<div class="glass p-3 flex justify-between text-[10px]"><span>${g.desc}</span><span class="text-red-400">-$${g.monto}</span></div>`).join('');
-            // Render Clientes
-            document.getElementById('lista-clientes').innerHTML = data.clientes.map(c => `<div class="glass p-3 flex justify-between text-[10px]"><span>${c.nombre}</span><a href="https://wa.me/${c.tel}" class="text-green-400 font-bold font-bold uppercase">WhatsApp 📱</a></div>`).join('');
-            // Render Espia
-            document.getElementById('lista-espia').innerHTML = data.espia.map(e => `<div class="glass p-3 italic">${e.negocio} vende ${e.prod} a <b class="text-white">$${e.precio}</b></div>`).join('');
-            // Render Alarmas
-            document.getElementById('lista-alarmas').innerHTML = data.alarmas.map(a => `<div class="glass p-3 flex justify-between text-[10px]"><span>🔔 ${a.nota}</span><span class="text-orange-400">${a.hora}</span></div>`).join('');
-            
-            // Render Cobranza y Misiones (basados en v26)
-            document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `<div class="glass p-4 flex justify-between items-center"><span class="text-[10px] uppercase">${m.texto}</span><button onclick="pasarACobranza(${m.id})" class="bg-red-700 px-2 py-1 rounded text-[7px]">COBRAR</button></div>`).join('');
-            document.getElementById('lista-cobranza').innerHTML = data.deudas.map(d => `<div class="glass p-4 border-l-4 border-red-500 mb-2 flex justify-between items-center"><span class="text-[10px]">${d.cliente}</span><span class="font-bold">$${d.monto}</span></div>`).join('');
-        }
-
+        // LÓGICA DE UI Y IA
         function updateUI() {
             document.getElementById('ganancia-total').innerText = data.ganancia.toFixed(2);
-            document.getElementById('total-deuda').innerText = data.deudas.reduce((a,b)=>a+b.monto,0).toFixed(2);
-            const p = (data.ganancia / data.meta) * 100;
-            document.getElementById('meta-bar').style.width = Math.min(p, 100) + "%";
-            document.getElementById('meta-status').innerText = `Progreso: ${p.toFixed(1)}% de la meta ($${data.meta})`;
+            const pend = data.deudas.reduce((a,b)=>a+b.monto,0);
+            document.getElementById('total-deuda').innerText = pend.toFixed(2);
+            document.getElementById('meta-val').innerText = data.meta;
+            let p = (data.ganancia / data.meta) * 100;
+            document.getElementById('meta-fill').style.width = Math.min(p, 100) + "%";
+            document.getElementById('meta-percent').innerText = Math.floor(p);
         }
 
         function runIA() {
             const ia = document.getElementById('ia-consejo');
-            if(data.deudas.length > 0) ia.innerText = "🚨 ALERTA: Hay cobros pendientes. Tu flujo de caja depende de liquidar esas deudas hoy.";
-            else if(data.ganancia < (data.meta * 0.2)) ia.innerText = "💡 CONSEJO: Estás lejos de la meta mensual. Considera lanzar una promoción o revisar tus precios en el Espía.";
-            else ia.innerText = "✅ Todo bajo control. Buen ritmo de trabajo.";
+            if(data.deudas.length > 0) {
+                ia.innerText = `⚠️ Atención: Hay ${data.deudas.length} cobros pendientes. Tu capital crecería un ${( (data.deudas.reduce((a,b)=>a+b.monto,0)/data.ganancia)*100 || 0).toFixed(0)}% si liquidas hoy.`;
+                ia.classList.add('text-red-400');
+            } else {
+                ia.innerText = "✅ Todo en orden. Estás operando con capital limpio. Sugerencia: Revisa los precios de la competencia en el Espía.";
+                ia.classList.remove('text-red-400');
+            }
         }
 
-        // Funciones básicas de misiones
+        // CALCULADORA
+        let currentExp = "";
+        function addNum(n) { currentExp += n; updateCalcDisplay(); }
+        function addOp(op) { currentExp += " " + op + " "; updateCalcDisplay(); }
+        function clearCalc() { currentExp = ""; updateCalcDisplay(); }
+        function updateCalcDisplay() { document.getElementById('calc-display').innerText = currentExp || "$0.00"; }
+        function exeCalc() { try { let res = eval(currentExp); currentExp = res.toString(); updateCalcDisplay(); } catch(e) { currentExp = "ERR"; updateCalcDisplay(); } }
+        function generarCotizacion() {
+            const c = parseFloat(document.getElementById('calc-costo').value);
+            const m = parseFloat(document.getElementById('calc-margen').value);
+            if(isNaN(c) || isNaN(m)) return;
+            const res = c + (c * (m/100));
+            document.getElementById('calc-display').innerText = "$" + res.toFixed(2);
+            document.getElementById('intro-calc').classList.remove('hidden');
+        }
+
+        // GESTION DE TRABAJOS
         function addMision() {
             const v = document.getElementById('new-mision').value; if(!v) return;
             data.misiones.push({id: Date.now(), texto: v});
-            document.getElementById('new-mision').value = ""; save(); renderAll();
+            document.getElementById('new-mision').value = ""; save(); renderMisiones();
+        }
+        function renderMisiones() {
+            document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `<div class="glass p-4 flex justify-between items-center border-l-4 border-indigo-500 mb-2"><span class="text-[10px] font-bold uppercase">${m.texto}</span><button onclick="pasarACobranza(${m.id})" class="bg-red-700 p-2 rounded-xl text-[7px] font-black">ENTREGAR & COBRAR</button></div>`).join('');
+        }
+        function pasarACobranza(id) {
+            const cli = prompt("Nombre del Cliente:"); if(!cli) return;
+            const mon = parseFloat(prompt("Monto total por cobrar: $")); if(isNaN(mon)) return;
+            const m = data.misiones.find(x=>x.id===id);
+            data.deudas.push({id: Date.now(), cliente: cli, monto: mon, desc: m.texto});
+            data.misiones = data.misiones.filter(x=>x.id!==id);
+            save(); updateUI(); renderMisiones(); renderDeudas(); runIA();
         }
 
-        function pasarACobranza(id) {
-            const cli = prompt("Cliente:"); if(!cli) return;
-            const mon = parseFloat(prompt("Monto: $")); if(isNaN(mon)) return;
-            data.deudas.push({id: Date.now(), cliente: cli, monto: mon});
-            data.misiones = data.misiones.filter(x=>x.id!==id);
-            save(); updateUI(); renderAll(); runIA();
+        // COBRANZA
+        function renderDeudas() {
+            document.getElementById('lista-cobranza').innerHTML = data.deudas.map(d => `<div class="glass p-4 border-l-4 border-red-500 mb-2"><div class="flex justify-between items-center"><span class="text-[10px] font-bold">${d.cliente}</span><span class="text-red-400 font-bold">$${d.monto}</span></div><p class="text-[7px] text-gray-500 uppercase mt-1">${d.desc}</p><div class="flex gap-2 mt-3"><button onclick="abonar(${d.id})" class="bg-white text-black px-4 py-1 rounded text-[7px] font-bold">ABONAR</button><button onclick="liquidarDeuda(${d.id})" class="bg-green-600 px-4 py-1 rounded text-[7px] font-bold">PAGÓ TODO</button></div></div>`).join('');
+        }
+        function abonar(id) {
+            const a = parseFloat(prompt("¿Cuánto abona el cliente? $")); if(isNaN(a)) return;
+            const d = data.deudas.find(x=>x.id===id);
+            d.monto -= a; data.ganancia += a;
+            data.logs.unshift({desc: `Abono de ${d.cliente}`, monto: a, tipo: 'plus', fecha: new Date().toLocaleTimeString()});
+            if(d.monto <= 0) data.deudas = data.deudas.filter(x=>x.id!==id);
+            save(); updateUI(); renderDeudas(); renderLogs();
+        }
+        function liquidarDeuda(id) {
+            const d = data.deudas.find(x=>x.id===id);
+            data.ganancia += d.monto;
+            data.logs.unshift({desc: `Liquidación de ${d.cliente}`, monto: d.monto, tipo: 'plus', fecha: new Date().toLocaleTimeString()});
+            data.deudas = data.deudas.filter(x=>x.id!==id);
+            save(); updateUI(); renderDeudas(); renderLogs(); runIA();
+        }
+
+        // OTROS MODULOS
+        function registrarGasto() {
+            const d = document.getElementById('gasto-desc').value; const m = parseFloat(document.getElementById('gasto-monto').value);
+            if(!d || isNaN(m)) return;
+            data.ganancia -= m;
+            data.logs.unshift({desc: d, monto: m, tipo: 'minus', fecha: new Date().toLocaleTimeString()});
+            save(); updateUI(); renderLogs();
+        }
+        function renderLogs() {
+            document.getElementById('lista-logs').innerHTML = data.logs.map(l => `<div class="text-[8px] p-2 glass flex justify-between"><span>${l.fecha} - ${l.desc}</span><span class="${l.tipo==='plus'?'text-green-400':'text-red-400'}">${l.tipo==='plus'?'+':'-'}$${l.monto}</span></div>`).join('');
+        }
+        function addCliente() {
+            const n = document.getElementById('cliente-nombre').value; const t = document.getElementById('cliente-tel').value;
+            if(!n || !t) return; data.clientes.push({n, t}); save(); renderClientes();
+        }
+        function renderClientes() {
+            document.getElementById('lista-clientes').innerHTML = data.clientes.map(c => `<div class="glass p-3 flex justify-between items-center text-[10px]"><span>${c.n}</span><a href="https://wa.me/${c.t}" class="text-green-400 font-bold uppercase">Chat</a></div>`).join('');
+        }
+        function setMeta() { data.meta = parseFloat(document.getElementById('meta-input').value) || 1000; save(); updateUI(); }
+        function addSpy() {
+            const n = document.getElementById('spy-negocio').value; const p = document.getElementById('spy-precio').value;
+            if(!n || !p) return; data.espia.push({n, p}); save(); renderSpy();
+        }
+        function renderSpy() {
+            document.getElementById('lista-espia').innerHTML = data.espia.map(s => `<div class="glass p-2 text-[8px] uppercase">Competencia: ${s.n} - Precio: $${s.p}</div>`).join('');
+        }
+        function addAlarma() {
+            const d = document.getElementById('alarm-desc').value; const t = document.getElementById('alarm-time').value;
+            if(!d || !t) return; data.alarmas.push({d, t}); save(); renderAlarmas();
+        }
+        function renderAlarmas() {
+            document.getElementById('lista-alarmas').innerHTML = data.alarmas.map(a => `<div class="glass p-2 text-[8px] flex justify-between"><span>🔔 ${a.d}</span><span>${a.t}</span></div>`).join('');
         }
     </script>
 </body>
