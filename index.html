@@ -3,176 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LevelUp Ultra Notifier 🎮</title>
+    <title>Survival Hero RPG 🛡️</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Orbitron', sans-serif; background: #050505; color: #e5e7eb; }
-        .neon-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); border: 1px solid #3b82f6; }
-        .card-mission { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(10px); }
-        .btn-glow:active { transform: scale(0.95); box-shadow: 0 0 20px #3b82f6; }
+        body { font-family: 'Press Start 2P', cursive; background: #0a0a0a; color: #fff; font-size: 8px; }
+        .pixel-border { border: 4px solid #fff; border-style: outset; background: #1a1a1a; }
+        .stat-bar { height: 12px; border: 2px solid #000; transition: width 0.5s; }
+        .btn-pixel { background: #3b82f6; border-bottom: 4px solid #1e3a8a; padding: 10px; cursor: pointer; }
+        .btn-pixel:active { border-bottom: 0; margin-top: 4px; }
+        .avatar-box { width: 80px; height: 80px; image-rendering: pixelated; }
     </style>
 </head>
-<body class="pb-20">
+<body class="p-4 pb-24">
 
-    <div id="setup" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-        <div class="text-7xl mb-6">🛡️</div>
-        <h1 class="text-4xl font-bold text-blue-500 tracking-tighter mb-2">LEVEL UP</h1>
-        <p class="text-gray-500 text-[10px] tracking-[0.4em] mb-10">SISTEMA DE NOTIFICACIONES ACTIVADO</p>
-        <button onclick="solicitarPermisosYEmpezar()" class="w-full max-w-xs bg-blue-600 p-5 rounded-2xl font-bold neon-blue text-xl btn-glow">
-            INICIAR AVENTURA 🚀
-        </button>
+    <header class="pixel-border p-4 mb-4 flex gap-4 items-center">
+        <div id="avatar" class="avatar-box bg-blue-900 flex items-center justify-center text-4xl border-4 border-white">
+            👤
+        </div>
+        <div class="flex-1">
+            <p id="p-name" class="mb-2 text-blue-400">HEROE</p>
+            <p class="mb-1">LVL: <span id="lvl">1</span></p>
+            <div class="w-full bg-gray-800 h-2 mb-2"><div id="xp-bar" class="bg-blue-400 h-full" style="width: 0%"></div></div>
+            <p class="text-yellow-400">ORO: <span id="oro">0</span>💰</p>
+        </div>
+    </header>
+
+    <div class="pixel-border p-3 mb-4 grid grid-cols-2 gap-4">
+        <div>
+            <p class="mb-1 text-cyan-400">SED 💧</p>
+            <div class="stat-bar bg-gray-900"><div id="bar-sed" class="bg-cyan-500 h-full" style="width: 100%"></div></div>
+        </div>
+        <div>
+            <p class="mb-1 text-orange-400">HAMBRE 🍖</p>
+            <div class="stat-bar bg-gray-900"><div id="bar-hambre" class="bg-orange-500 h-full" style="width: 100%"></div></div>
+        </div>
     </div>
 
-    <div id="dashboard" class="hidden p-4 animate-fadeIn">
-        <header class="flex justify-between items-start mb-6 bg-gray-900/80 p-5 rounded-3xl border-b-2 border-blue-500 shadow-xl">
-            <div>
-                <p id="user-role" class="text-blue-400 text-[9px] font-bold tracking-widest mb-1">AVATAR</p>
-                <p class="text-2xl font-bold italic">Lvl <span id="lvl">1</span></p>
-                <p class="text-[9px] text-orange-400 mt-1">🔥 RACHA: <span id="racha">0</span> DÍAS</p>
-            </div>
-            <div class="text-right">
-                <p class="text-yellow-500 text-[9px] font-bold tracking-widest">TESORO 💰</p>
-                <p class="text-3xl font-bold text-green-400 font-mono">$<span id="balance">0.00</span></p>
-            </div>
-        </header>
+    <div class="grid grid-cols-2 gap-2 mb-6">
+        <button onclick="cuidar('agua')" class="btn-pixel text-[6px] bg-blue-700">BEBER AGUA 🥤</button>
+        <button onclick="cuidar('comida')" class="btn-pixel text-[6px] bg-orange-700">COMER ALGO 🍎</button>
+    </div>
 
-        <div class="bg-gray-900/40 p-4 rounded-3xl mb-6 border border-gray-800">
-            <canvas id="graficaAhorro" height="120"></canvas>
+    <nav class="flex gap-2 mb-4">
+        <button onclick="tab('quests')" class="bg-gray-700 p-2 flex-1">MISIÓN</button>
+        <button onclick="tab('shop')" class="bg-gray-700 p-2 flex-1">TIENDA</button>
+    </nav>
+
+    <div id="tab-quests" class="tab-content">
+        <h2 class="text-blue-300 mb-4">MISIONES SECUNDARIAS ⚔️</h2>
+        <div id="lista-secundarias" class="space-y-2 mb-6">
+            <div class="pixel-border p-2 flex justify-between items-center bg-gray-800">
+                <span>TAREA 5 MIN</span>
+                <button onclick="ganar(10, 2)" class="bg-green-600 p-1 text-[5px]">OK</button>
+            </div>
         </div>
+        <input id="new-q" type="text" placeholder="Nueva misión..." class="w-full bg-gray-900 p-2 mb-2 border-2 border-gray-700 outline-none">
+        <button onclick="addQ()" class="w-full btn-pixel bg-blue-600 mb-4 font-bold">AÑADIR RETO +</button>
+    </div>
 
-        <section class="mb-8">
-            <div class="flex gap-2 bg-gray-900 p-2 rounded-2xl border border-gray-700">
-                <input id="nueva-tarea" type="text" placeholder="Nueva misión... 💪" class="flex-1 bg-transparent p-3 text-sm outline-none">
-                <button onclick="agregarMision()" class="bg-blue-600 w-12 h-12 rounded-xl font-bold text-2xl">+</button>
+    <div id="tab-shop" class="tab-content hidden">
+        <h2 class="text-yellow-400 mb-4">TIENDA DE ARMADURA 🛡️</h2>
+        <div class="space-y-3">
+            <div class="pixel-border p-2 flex justify-between items-center">
+                <span>CASCO HIERRO</span>
+                <button onclick="comprar('🪖', 50)" class="bg-yellow-600 p-1">50💰</button>
             </div>
-        </section>
-
-        <div id="lista-misiones" class="space-y-4"></div>
-
-        <button onclick="enviarNotificacion('🔔 Recordatorio', '¡No olvides completar tus tareas para subir de nivel!')" class="mt-10 w-full text-[10px] text-blue-500/50 uppercase tracking-widest">
-            Probar Notificación 📲
-        </button>
+            <div class="pixel-border p-2 flex justify-between items-center">
+                <span>ESCUDO LUZ</span>
+                <button onclick="comprar('🛡️', 100)" class="bg-yellow-600 p-1">100💰</button>
+            </div>
+            <div class="pixel-border p-2 flex justify-between items-center">
+                <span>ESPADA FUEGO</span>
+                <button onclick="comprar('🔥', 200)" class="bg-yellow-600 p-1">200💰</button>
+            </div>
+        </div>
+        <div id="inventario" class="mt-4 text-gray-500">EQUIPADO: Ninguno</div>
     </div>
 
     <script>
-        let xp = parseInt(localStorage.getItem('xp')) || 0;
-        let nivel = parseInt(localStorage.getItem('nivel')) || 1;
-        let balance = parseFloat(localStorage.getItem('balance')) || 0;
-        let racha = parseInt(localStorage.getItem('racha')) || 0;
-        let misiones = JSON.parse(localStorage.getItem('misiones')) || [];
-        let historial = JSON.parse(localStorage.getItem('historial')) || [0];
-        let chart;
+        let state = JSON.parse(localStorage.getItem('hero-data')) || {
+            lvl: 1, xp: 0, oro: 0, sed: 100, hambre: 100, equipo: [], items: ""
+        };
 
-        function solicitarPermisosYEmpezar() {
-            if ("Notification" in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        enviarNotificacion("⚔️ Sistema Activo", "¡Te avisaré cuando tengas misiones pendientes!");
-                    }
-                });
-            }
-            iniciarApp();
+        // Reducción automática de supervivencia cada 30 min (simulado más rápido para prueba)
+        setInterval(() => {
+            state.sed = Math.max(0, state.sed - 1);
+            state.hambre = Math.max(0, state.hambre - 0.5);
+            updateUI();
+        }, 60000); 
+
+        function updateUI() {
+            document.getElementById('lvl').innerText = state.lvl;
+            document.getElementById('oro').innerText = state.oro;
+            document.getElementById('xp-bar').style.width = state.xp + "%";
+            document.getElementById('bar-sed').style.width = state.sed + "%";
+            document.getElementById('bar-hambre').style.width = state.hambre + "%";
+            document.getElementById('avatar').innerText = state.sed < 20 ? "😵" : (state.items || "👤");
+            if(state.sed < 10) document.getElementById('avatar').classList.add('bg-red-900');
+            else document.getElementById('avatar').classList.remove('bg-red-900');
+            localStorage.setItem('hero-data', JSON.stringify(state));
         }
 
-        function iniciarApp() {
-            document.getElementById('setup').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            renderizarMisiones();
-            actualizarInterfaz();
-            inicializarGrafica();
-            
-            // Recordatorio automático cada 4 horas (si la app está abierta)
-            setInterval(() => {
-                if(misiones.length > 0) {
-                    enviarNotificacion("⚠️ Misiones Pendientes", `Tienes ${misiones.length} retos esperando.`);
-                }
-            }, 1000 * 60 * 60 * 4);
+        function cuidar(tipo) {
+            if(tipo === 'agua') state.sed = Math.min(100, state.sed + 30);
+            if(tipo === 'comida') state.hambre = Math.min(100, state.hambre + 40);
+            updateUI();
         }
 
-        function enviarNotificacion(titulo, cuerpo) {
-            if (Notification.permission === "granted") {
-                new Notification(titulo, { body: cuerpo, icon: "https://cdn-icons-png.flaticon.com/512/616/616490.png" });
-            }
+        function ganar(xp, oro) {
+            state.xp += xp;
+            state.oro += oro;
+            if(state.xp >= 100) { state.xp = 0; state.lvl++; alert("¡LEVEL UP! ✨"); }
+            updateUI();
         }
 
-        function agregarMision() {
-            const input = document.getElementById('nueva-tarea');
-            if (input.value.trim() === "") return;
-            const nueva = { id: Date.now(), texto: input.value, xp: 20, oro: 5 };
-            misiones.push(nueva);
-            localStorage.setItem('misiones', JSON.stringify(misiones));
-            input.value = "";
-            renderizarMisiones();
+        function comprar(emoji, precio) {
+            if(state.oro >= precio) {
+                state.oro -= precio;
+                state.items = emoji;
+                document.getElementById('inventario').innerText = "EQUIPADO: " + emoji;
+                updateUI();
+            } else { alert("¡No tienes suficiente oro!"); }
         }
 
-        function completarMision(id, puntosXP, puntosOro) {
-            xp += puntosXP;
-            balance += puntosOro;
-            misiones = misiones.filter(m => m.id !== id);
-            historial.push(balance);
-            if(historial.length > 10) historial.shift();
-
-            localStorage.setItem('misiones', JSON.stringify(misiones));
-            localStorage.setItem('xp', xp);
-            localStorage.setItem('balance', balance);
-            localStorage.setItem('historial', JSON.stringify(historial));
-
-            if (xp >= 100) { xp -= 100; nivel++; localStorage.setItem('nivel', nivel); }
-            
-            actualizarInterfaz();
-            renderizarMisiones();
-            actualizarGrafica();
+        function tab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById('tab-' + t).classList.remove('hidden');
         }
 
-        function inicializarGrafica() {
-            const ctx = document.getElementById('graficaAhorro').getContext('2d');
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: historial.map((_, i) => i),
-                    datasets: [{
-                        data: historial,
-                        borderColor: '#3b82f6',
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        pointRadius: 0
-                    }]
-                },
-                options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
-            });
+        function addQ() {
+            const val = document.getElementById('new-q').value;
+            if(!val) return;
+            const div = document.createElement('div');
+            div.className = "pixel-border p-2 flex justify-between items-center bg-gray-800 mb-2";
+            div.innerHTML = `<span>${val}</span><button onclick="this.parentElement.remove(); ganar(25, 10)" class="bg-green-600 p-1 text-[5px]">OK</button>`;
+            document.getElementById('lista-secundarias').appendChild(div);
+            document.getElementById('new-q').value = "";
         }
 
-        function actualizarGrafica() {
-            chart.data.labels = historial.map((_, i) => i);
-            chart.data.datasets[0].data = historial;
-            chart.update();
-        }
-
-        function renderizarMisiones() {
-            const lista = document.getElementById('lista-misiones');
-            lista.innerHTML = misiones.length === 0 ? `<p class="text-center text-gray-600 text-xs py-10">No hay misiones. ¡Crea una nueva! ✨</p>` : "";
-            misiones.forEach(m => {
-                lista.innerHTML += `
-                    <div class="card-mission p-5 rounded-3xl flex justify-between items-center border border-gray-800 shadow-lg">
-                        <div>
-                            <p class="text-sm font-bold">${m.texto}</p>
-                            <p class="text-[9px] text-blue-500">+${m.xp} XP | +${m.oro} ORO</p>
-                        </div>
-                        <button onclick="completarMision(${m.id}, ${m.xp}, ${m.oro})" class="bg-blue-600/10 text-blue-400 border border-blue-600 px-4 py-2 rounded-xl text-[10px] font-bold active:scale-90 transition-all">LOGRADO</button>
-                    </div>
-                `;
-            });
-        }
-
-        function actualizarInterfaz() {
-            document.getElementById('balance').innerText = balance.toFixed(2);
-            document.getElementById('lvl').innerText = nivel;
-            document.getElementById('racha').innerText = racha;
-        }
+        updateUI();
     </script>
 </body>
 </html>
-
