@@ -3,252 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LevelUp: Apex OS 🛡️</title>
+    <title>LevelUp: Oracle v11 🔮</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #3b82f6; --accent: #00ffff; --bg: #030303; }
-        body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: #fff; font-size: 10px; }
-        .pixel-font { font-family: 'Press Start 2P', cursive; font-size: 6px; }
-        .glass { background: rgba(20, 20, 30, 0.7); border: 1px solid #333; backdrop-filter: blur(10px); border-radius: 12px; }
-        .neon-text { color: var(--accent); text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
-        .tab-content { display: none; transition: 0.3s; }
-        .active-tab { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-        .btn-main { background: linear-gradient(135deg, #1e40af, #3b82f6); border-bottom: 4px solid #1e3a8a; font-weight: bold; transition: 0.1s; }
-        .btn-main:active { border-bottom: 0; transform: translateY(4px); }
+        body { font-family: 'JetBrains Mono', monospace; background: #020205; color: #fff; min-height: 100vh; overflow-x: hidden; }
+        .bg-nebula { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at bottom left, #1e1b4b 0%, #020205 100%); opacity: 0.6; z-index: -1; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(15px); border-radius: 20px; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        input, select, textarea { background: rgba(0,0,0,0.7) !important; border: 1px solid #333 !important; color: #fff !important; padding: 14px; border-radius: 12px; width: 100%; outline: none; font-size: 11px; }
+        .btn-main { background: linear-gradient(135deg, #3b82f6, #6366f1); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-main:active { transform: scale(0.98); }
+        .oracle-box { border-left: 4px solid #06b6d4; background: linear-gradient(90deg, rgba(6,182,212,0.1), transparent); }
+        .alarm-card { background: rgba(249, 115, 22, 0.05); border: 1px solid rgba(249, 115, 22, 0.2); }
     </style>
 </head>
-<body class="p-4 pb-28">
+<body class="p-4 pb-32">
+    <div class="bg-nebula"></div>
 
-    <div id="setup" class="hidden flex flex-col items-center justify-center min-h-screen">
-        <div class="glass p-8 w-full max-w-xs border-2 border-blue-500">
-            <h1 class="pixel-font text-blue-400 mb-6 text-center">APEX INITIALIZATION</h1>
-            <input id="p-name-in" type="text" placeholder="OPERADOR" class="w-full bg-black border border-gray-700 p-2 mb-4">
-            <select id="p-job-in" class="w-full bg-black border border-gray-700 p-2 mb-4">
-                <option value="Gastronomía">GASTRONOMÍA</option>
-                <option value="Textil">TEXTIL / MODA</option>
-                <option value="Digital">DIGITAL / DISEÑO</option>
-                <option value="Técnico">SERVICIOS TÉCNICOS</option>
-            </select>
-            <input id="p-rate-in" type="number" placeholder="VALOR HORA $" class="w-full bg-black border border-gray-700 p-2 mb-6">
-            <button onclick="configurarPerfil()" class="btn-main w-full p-3 uppercase">Activar Sistema</button>
+    <header class="glass p-5 mb-4 flex justify-between items-center relative overflow-hidden">
+        <div>
+            <p class="text-[7px] text-cyan-400 font-bold uppercase tracking-widest mb-1">Capital Operativo</p>
+            <p class="text-2xl font-bold tracking-tighter text-white">$<span id="oro-total">0.00</span></p>
+        </div>
+        <div class="text-right">
+            <span class="text-orange-500 font-bold text-[10px] block mb-1">🔥 RACHA: <span id="streak-val">1</span></span>
+            <p class="text-[9px] bg-white/10 px-3 py-1 rounded-full font-bold">LVL <span id="lvl">1</span></p>
+        </div>
+    </header>
+
+    <section class="glass p-4 mb-4 oracle-box">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="animate-pulse">🧠</span>
+            <p class="text-[8px] font-bold text-cyan-400 uppercase">Análisis del Mentor IA</p>
+        </div>
+        <p id="ia-advice" class="text-[10px] italic text-gray-300 leading-relaxed">
+            "Esperando datos para analizar tu rendimiento..."
+        </p>
+    </section>
+
+    <nav class="grid grid-cols-5 gap-2 mb-6">
+        <button onclick="tab('misiones')" class="glass p-3 text-[6px] font-bold uppercase">Misiones</button>
+        <button onclick="tab('boveda')" class="glass p-3 text-[6px] font-bold uppercase text-yellow-500">Bóveda</button>
+        <button onclick="tab('alarmas')" class="glass p-3 text-[6px] font-bold uppercase text-orange-400">Alarmas</button>
+        <button onclick="tab('stock')" class="glass p-3 text-[6px] font-bold uppercase text-blue-400">Stock</button>
+        <button onclick="tab('stats')" class="glass p-3 text-[6px] font-bold uppercase text-purple-400">Logs</button>
+    </nav>
+
+    <div id="tab-misiones" class="tab-content active-tab">
+        <div id="lista-misiones" class="space-y-3 mb-4"></div>
+        <div class="glass p-4">
+            <input id="new-mision" type="text" placeholder="¿Cuál es la misión de hoy?" class="mb-3">
+            <button onclick="addMision()" class="btn-main w-full text-[9px]">REGISTRAR ORDEN</button>
         </div>
     </div>
 
-    <div id="dashboard" class="max-w-md mx-auto">
-        <header class="glass p-4 mb-4 flex items-center gap-4 border-l-4 border-blue-500">
-            <div class="w-12 h-12 bg-blue-900 rounded-lg flex items-center justify-center border border-blue-400">👤</div>
-            <div class="flex-1">
-                <div class="flex justify-between items-center mb-1">
-                    <span id="display-name" class="pixel-font text-[8px]">---</span>
-                    <span class="pixel-font text-yellow-400">LVL <span id="lvl">1</span></span>
-                </div>
-                <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
-                    <div id="xp-bar" class="bg-blue-500 h-full" style="width: 0%"></div>
-                </div>
-                <p id="display-job" class="text-[6px] text-gray-500 mt-1 uppercase italic"></p>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-4 gap-2 mb-4">
-            <button onclick="tab('misiones')" class="glass p-2 pixel-font text-[5px] text-center">MISIONES</button>
-            <button onclick="tab('costos')" class="glass p-2 pixel-font text-[5px] text-center">COSTOS</button>
-            <button onclick="tab('ia')" class="glass p-2 pixel-font text-[5px] text-center text-cyan-400">IA</button>
-            <button onclick="tab('stats')" class="glass p-2 pixel-font text-[5px] text-center text-green-400">STATS</button>
+    <div id="tab-alarmas" class="tab-content">
+        <h2 class="text-orange-400 font-bold mb-4 text-[10px] uppercase">Recordatorios & Alertas ⏰</h2>
+        <div class="glass p-4 mb-4 space-y-3">
+            <input id="alarm-text" type="text" placeholder="¿Qué debemos recordarte?">
+            <input id="alarm-time" type="time">
+            <button onclick="addAlarm()" class="btn-main bg-orange-600 w-full text-[9px]">PROGRAMAR ALARMA</button>
         </div>
+        <div id="lista-alarmas" class="space-y-2"></div>
+    </div>
 
-        <div id="tab-misiones" class="tab-content active-tab">
-            <div id="lista-misiones" class="space-y-3 mb-4"></div>
-            <div class="glass p-4 border-dashed border-gray-600">
-                <input id="new-mision" type="text" placeholder="Definir nuevo objetivo..." class="w-full bg-transparent border-b border-gray-700 p-2 mb-4 outline-none">
-                <button onclick="addMision()" class="btn-main w-full p-2 text-[7px] uppercase">Registrar Misión</button>
-            </div>
-        </div>
-
-        <div id="tab-costos" class="tab-content">
-            <h2 class="pixel-font text-green-400 mb-4">DESGLOSE DE MATERIALES</h2>
-            <div class="glass p-4 mb-4 space-y-3">
-                <input id="mat-nombre" type="text" placeholder="ITEM (Ejem: Harina/Tela)" class="w-full bg-black p-2 border border-gray-800">
-                <div class="grid grid-cols-2 gap-2">
-                    <input id="mat-costo" type="number" placeholder="COSTO $" class="bg-black p-2 border border-gray-800">
-                    <input id="mat-rinde" type="number" placeholder="RINDE (g/mt)" class="bg-black p-2 border border-gray-800">
-                </div>
-                <input id="mat-uso" type="number" placeholder="USO EN ESTE TRABAJO" class="w-full bg-black p-2 border border-gray-800">
-                <button onclick="addMaterial()" class="bg-green-700 w-full p-2 font-bold uppercase text-[8px] rounded">Sumar al Cálculo</button>
-            </div>
-            <div id="lista-materiales" class="space-y-2 mb-4"></div>
-            <div class="glass p-4 bg-green-900/10 border-green-500">
-                <div class="flex justify-between text-[8px] mb-2"><span>COSTO BASE:</span><span id="total-base">$0.00</span></div>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-[8px]">MARGEN %:</span>
-                    <input id="calc-margen" type="number" value="40" oninput="recalcTotal()" class="w-16 bg-black border border-gray-700 p-1 text-center">
-                </div>
-                <div class="text-lg font-bold text-green-400 flex justify-between border-t border-green-900 pt-2">
-                    <span>PV FINAL:</span><span id="total-venta">$0.00</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-ia" class="tab-content">
-            <div class="glass p-4 border-cyan-500 border">
-                <p class="pixel-font text-cyan-400 mb-4 animate-pulse">> IA ANALYZER ACTIVE</p>
-                <textarea id="ia-prompt" rows="3" placeholder="Pega mensaje de cliente o duda de negocio..." class="w-full bg-black p-3 border border-gray-800 mb-4 text-[9px]"></textarea>
-                <button onclick="superIA()" class="btn-main w-full p-3 text-[8px]">PROCESAR DATA</button>
-            </div>
-            <div id="ia-output" class="hidden mt-4 glass p-4 border-l-4 border-cyan-400 italic text-[8px] text-cyan-100"></div>
-        </div>
-
-        <div id="tab-stats" class="tab-content">
-            <div class="glass p-4 mb-4">
-                <h3 class="pixel-font text-green-400 mb-4 text-center">RENDIMIENTO SEMANAL</h3>
-                <canvas id="myChart"></canvas>
-            </div>
+    <div id="tab-boveda" class="tab-content">
+        <div class="glass p-5 mb-4 border-l-4 border-yellow-500">
+            <p class="text-[10px] font-bold text-yellow-500 mb-2 uppercase">🎯 META: <span id="meta-nombre">---</span></p>
+            <div class="w-full bg-white/5 h-2 rounded-full mb-3"><div id="meta-progreso" class="bg-yellow-400 h-full rounded-full" style="width: 0%"></div></div>
             <div class="grid grid-cols-2 gap-2">
-                <div class="glass p-3 text-center">
-                    <p class="text-[6px] text-gray-400 mb-1">CAPITAL ACUMULADO</p>
-                    <p class="text-xl font-bold text-yellow-500">$<span id="oro">0</span></p>
-                </div>
-                <div id="reversion-box" class="glass p-3 text-center border-orange-500 border">
-                    <p class="text-[6px] text-orange-400 mb-1">REINVERSIÓN (20%)</p>
-                    <p class="text-xl font-bold">$<span id="val-reversion">0</span></p>
-                </div>
+                <input id="ahorro-monto" type="number" placeholder="Monto $">
+                <button onclick="saveMoney()" class="btn-main bg-yellow-600 p-2 text-[8px]">GUARDAR</button>
             </div>
         </div>
+        <div class="glass p-4 border-l-4 border-red-500">
+            <p class="text-[9px] font-bold text-red-400 mb-3 uppercase italic">Gasto detectado:</p>
+            <input id="gasto-nombre" type="text" placeholder="Descripción del gasto" class="mb-2">
+            <input id="gasto-monto" type="number" placeholder="Monto $" class="mb-3">
+            <button onclick="subMoney()" class="btn-main bg-red-600 w-full text-[9px]">RESTAR DE MI ORO</button>
+        </div>
+    </div>
+
+    <div id="tab-stock" class="tab-content">
+        <div class="glass p-4 mb-4 space-y-2">
+            <input id="inv-nombre" type="text" placeholder="Insumo (Ej: Tela Terry)">
+            <div class="grid grid-cols-2 gap-2">
+                <input id="inv-costo" type="number" placeholder="Costo Total $">
+                <input id="inv-rinde" type="number" placeholder="Rinde (gr/mt)">
+            </div>
+            <button onclick="addInventario()" class="btn-main bg-blue-600 w-full text-[9px]">AÑADIR AL ALMACÉN</button>
+        </div>
+        <div id="lista-inventario" class="space-y-2"></div>
+    </div>
+
+    <div id="tab-stats" class="tab-content">
+        <div id="lista-historial" class="space-y-2 max-h-96 overflow-y-auto"></div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('apex-v6-data')) || {
-            nombre: "", oficio: "", rate: 0, lvl: 1, xp: 0, oro: 0, misiones: [], historial: [], materiales: [],
-            chartData: [0, 0, 0, 0, 0, 0, 0] // 7 días
+        let data = JSON.parse(localStorage.getItem('titan-oracle-v11')) || {
+            oro: 0, ahorrado: 0, metaNombre: "N/A", metaTarget: 0,
+            misiones: [], inventory: [], logs: [], alarmas: [], streak: 1, lastLogin: new Date().toLocaleDateString()
         };
 
-        let myChart;
+        window.onload = () => { updateUI(); checkAlarms(); runOracle(); };
 
-        window.onload = () => {
-            if(!data.nombre) document.getElementById('setup').classList.remove('hidden');
-            else {
-                document.getElementById('dashboard').classList.remove('hidden');
-                initChart();
-                updateUI();
+        // --- EL ORÁCULO IA (CONSEJOS SEGÚN ACCIÓN) ---
+        function runOracle() {
+            const advice = document.getElementById('ia-advice');
+            const balance = data.logs.filter(l => l.tipo === 'ingreso').reduce((a,b)=>a+b.monto,0) - data.logs.filter(l => l.tipo === 'egreso').reduce((a,b)=>a+b.monto,0);
+
+            if(data.misiones.length > 3) {
+                advice.innerText = "IA: Tienes muchas misiones pendientes. Enfócate en cerrar una antes de aceptar más pedidos para mantener la calidad.";
+            } else if(data.oro < 10 && data.logs.length > 0) {
+                advice.innerText = "IA: Tu Oro está bajo. Revisa tus últimos gastos o sube tu margen de ganancia en la calculadora.";
+            } else if(data.ahorrado >= data.metaTarget && data.metaTarget > 0) {
+                advice.innerText = "IA: ¡FELICIDADES! Has alcanzado tu meta. Es momento de reinvertir y establecer un objetivo más grande.";
+            } else if(data.streak > 3) {
+                advice.innerText = "IA: Llevas " + data.streak + " días de racha. Tu disciplina está construyendo un imperio.";
+            } else {
+                advice.innerText = "IA: Registra tu primera venta del día para ver cómo crece tu gráfica de rendimiento.";
             }
-        };
-
-        function configurarPerfil() {
-            data.nombre = document.getElementById('p-name-in').value || "OPERADOR";
-            data.oficio = document.getElementById('p-job-in').value;
-            data.rate = parseFloat(document.getElementById('p-rate-in').value) || 10;
-            save(); location.reload();
         }
 
-        function initChart() {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
-                    datasets: [{
-                        label: 'Ganancias $',
-                        data: data.chartData,
-                        borderColor: '#00ffff',
-                        backgroundColor: 'rgba(0, 255, 255, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
-            });
+        // --- SISTEMA DE ALARMAS ---
+        function addAlarm() {
+            const txt = document.getElementById('alarm-text').value;
+            const time = document.getElementById('alarm-time').value;
+            if(!txt || !time) return;
+            data.alarmas.push({ txt, time, active: true, id: Date.now() });
+            save(); renderAlarms();
+            document.getElementById('alarm-text').value = "";
         }
 
-        // --- CALCULADORA ---
-        function addMaterial() {
-            const n = document.getElementById('mat-nombre').value;
-            const c = parseFloat(document.getElementById('mat-costo').value);
-            const r = parseFloat(document.getElementById('mat-rinde').value);
-            const u = parseFloat(document.getElementById('mat-uso').value);
-            if(!n || isNaN(c)) return;
-            data.materiales.push({ n, p: (c/r)*u });
-            renderMateriales(); recalcTotal();
-            document.getElementById('mat-nombre').value = "";
-            document.getElementById('mat-costo').value = "";
-        }
-
-        function renderMateriales() {
-            document.getElementById('lista-materiales').innerHTML = data.materiales.map((m, i) => `
-                <div class="glass p-2 flex justify-between text-[8px] border-l-2 border-green-500">
-                    <span>${m.n}</span> <strong>$${m.p.toFixed(2)}</strong>
-                    <button onclick="data.materiales.splice(${i},1); renderMateriales(); recalcTotal();" class="text-red-500">×</button>
+        function renderAlarms() {
+            document.getElementById('lista-alarmas').innerHTML = data.alarmas.map(a => `
+                <div class="glass p-3 flex justify-between items-center alarm-card">
+                    <div>
+                        <p class="text-[9px] font-bold uppercase">${a.txt}</p>
+                        <p class="text-[8px] text-orange-400">⏰ ${a.time}</p>
+                    </div>
+                    <button onclick="removeAlarm(${a.id})" class="text-red-500 font-bold text-[10px]">ELIMINAR</button>
                 </div>
             `).join('');
         }
 
-        function recalcTotal() {
-            const base = data.materiales.reduce((acc, m) => acc + m.p, 0);
-            const m = parseFloat(document.getElementById('calc-margen').value) || 0;
-            const venta = base + (base * m/100);
-            document.getElementById('total-base').innerText = "$" + base.toFixed(2);
-            document.getElementById('total-venta').innerText = "$" + venta.toFixed(2);
+        function checkAlarms() {
+            setInterval(() => {
+                const now = new Date();
+                const cur = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                data.alarmas.forEach(a => {
+                    if(a.active && a.time === cur) {
+                        alert("🚨 RECORDATORIO: " + a.txt);
+                        a.active = false; save(); renderAlarms();
+                    }
+                });
+            }, 30000);
         }
 
-        // --- IA ---
-        function superIA() {
-            const p = document.getElementById('ia-prompt').value.toLowerCase();
-            const out = document.getElementById('ia-output');
-            out.classList.remove('hidden');
-            out.innerText = "PROCESANDO CONSULTA...";
-            setTimeout(() => {
-                let r = "ANALISIS: Enfócate en la post-venta. Un cliente que vuelve vale por 3 nuevos.";
-                if(p.includes("cliente")) r = "STRATEGY: Responde con validación. 'Entiendo tu punto, buscamos la mejor calidad para ti. ¿Qué ajuste te haría sentir más cómodo?'";
-                out.innerText = r;
-            }, 800);
+        function removeAlarm(id) {
+            data.alarmas = data.alarmas.filter(a => a.id !== id);
+            save(); renderAlarms();
         }
 
-        // --- CORE ---
-        function addMision() {
-            const v = document.getElementById('new-mision').value;
-            if(!v) return;
-            data.misiones.push({id: Date.now(), texto: v});
-            document.getElementById('new-mision').value = "";
-            save(); renderMisiones();
+        // --- SISTEMA DE LOGS Y DINERO ---
+        function addLog(tipo, desc, monto) {
+            data.logs.unshift({ tipo, desc, monto, fecha: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+            runOracle();
         }
 
         function completar(id) {
-            const h = prompt("HORAS TRABAJADAS:", "1");
-            if(h === null) return;
-            const g = parseFloat(h) * data.rate;
-            data.oro += Math.round(g);
-            data.xp += 25;
-            
-            // Actualizar Gráfica (Simplificado al día actual)
-            const diaSemana = (new Date().getDay() + 6) % 7;
-            data.chartData[diaSemana] += Math.round(g);
-            
+            const m = prompt("INGRESO POR ESTA MISIÓN $:");
+            if(!m || isNaN(m)) return;
+            const val = parseFloat(m);
+            data.oro += val;
+            addLog('ingreso', data.misiones.find(x => x.id === id).texto, val);
             data.misiones = data.misiones.filter(x => x.id !== id);
-            if(data.xp >= 100) { data.xp = 0; data.lvl++; }
             save(); updateUI();
-            if(myChart) { myChart.data.datasets[0].data = data.chartData; myChart.update(); }
         }
 
+        function subMoney() {
+            const n = document.getElementById('gasto-nombre').value;
+            const m = parseFloat(document.getElementById('gasto-monto').value);
+            if(!n || isNaN(m)) return;
+            data.oro -= m;
+            addLog('egreso', n, m);
+            document.getElementById('gasto-nombre').value = ""; document.getElementById('gasto-monto').value = "";
+            save(); updateUI();
+        }
+
+        function saveMoney() {
+            const m = parseFloat(document.getElementById('ahorro-monto').value);
+            if(!m || m > data.oro) return;
+            data.oro -= m; data.ahorrado += m;
+            addLog('ahorro', "Para " + data.metaNombre, m);
+            document.getElementById('ahorro-monto').value = "";
+            save(); updateUI();
+        }
+
+        // --- UI CORE ---
         function updateUI() {
-            document.getElementById('display-name').innerText = data.nombre;
-            document.getElementById('display-job').innerText = data.oficio;
-            document.getElementById('oro').innerText = data.oro.toLocaleString();
-            document.getElementById('val-reversion').innerText = (data.oro * 0.2).toFixed(2);
-            document.getElementById('lvl').innerText = data.lvl;
-            document.getElementById('xp-bar').style.width = data.xp + "%";
-            renderMisiones();
-            renderMateriales();
-            recalcTotal();
+            document.getElementById('oro-total').innerText = data.oro.toFixed(2);
+            document.getElementById('streak-val').innerText = data.streak;
+            document.getElementById('lvl').innerText = Math.floor(data.oro / 500) + 1;
+            document.getElementById('meta-nombre').innerText = data.metaNombre;
+            const pct = (data.ahorrado / data.metaTarget) * 100 || 0;
+            document.getElementById('meta-progreso').style.width = Math.min(100, pct) + "%";
+            
+            renderMisiones(); renderAlarms(); renderInventario(); renderHistorial();
         }
 
         function renderMisiones() {
             document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `
-                <div class="glass p-3 flex justify-between items-center border-l-4 border-blue-500">
-                    <span class="text-[8px] font-bold">${m.texto}</span>
-                    <button onclick="completar(${m.id})" class="btn-main p-1 px-4 text-[6px] rounded">CERRAR</button>
+                <div class="glass p-4 flex justify-between items-center border-l-4 border-blue-500">
+                    <span class="text-[10px] font-bold uppercase">${m.texto}</span>
+                    <button onclick="completar(${m.id})" class="btn-main px-4 py-2 text-[8px]">COBRAR</button>
                 </div>
             `).join('');
+        }
+
+        function renderHistorial() {
+            document.getElementById('lista-historial').innerHTML = data.logs.map(l => `
+                <div class="glass p-3 flex justify-between items-center text-[8px] mb-2 ${l.tipo==='ingreso'?'border-l-2 border-green-500':'border-l-2 border-red-500'}">
+                    <span>${l.desc}</span>
+                    <span class="${l.tipo==='ingreso'?'text-green-400':'text-red-400'}">${l.tipo==='ingreso'?'+':'-'}$${l.monto.toFixed(2)}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderInventario() {
+            document.getElementById('lista-inventario').innerHTML = data.inventory.map((m, i) => `
+                <div class="glass p-3 flex justify-between text-[9px]"><span>${m.n}</span><button onclick="data.inventory.splice(${i},1); save(); renderInventario();" class="text-red-500">BORRAR</button></div>
+            `).join('');
+        }
+
+        function addInventario() {
+            const n = document.getElementById('inv-nombre').value;
+            const c = parseFloat(document.getElementById('inv-costo').value);
+            const r = parseFloat(document.getElementById('inv-rinde').value);
+            if(!n || isNaN(c)) return;
+            data.inventory.push({ n, c, r }); save(); renderInventario();
+            document.getElementById('inv-nombre').value = "";
+        }
+
+        function addMision() {
+            const v = document.getElementById('new-mision').value; if(!v) return;
+            data.misiones.push({id: Date.now(), texto: v});
+            document.getElementById('new-mision').value = ""; save(); updateUI();
         }
 
         function tab(t) {
@@ -256,7 +261,7 @@
             document.getElementById('tab-' + t).classList.add('active-tab');
         }
 
-        function save() { localStorage.setItem('apex-v6-data', JSON.stringify(data)); }
+        function save() { localStorage.setItem('titan-oracle-v11', JSON.stringify(data)); }
     </script>
 </body>
 </html>
