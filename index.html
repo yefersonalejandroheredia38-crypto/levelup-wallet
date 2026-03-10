@@ -3,251 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LevelUp: Oracle v11 🔮</title>
+    <title>LevelUp: Boss Edition v13 🛡️</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'JetBrains Mono', monospace; background: #020205; color: #fff; min-height: 100vh; overflow-x: hidden; }
-        .bg-nebula { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at bottom left, #1e1b4b 0%, #020205 100%); opacity: 0.6; z-index: -1; }
-        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(15px); border-radius: 20px; }
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        body { font-family: 'JetBrains Mono', monospace; background: #020205; color: #fff; min-height: 100vh; }
+        .bg-nebula { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1e1b4b 0%, #020205 100%); opacity: 0.5; z-index: -1; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 15px; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        input, select, textarea { background: rgba(0,0,0,0.7) !important; border: 1px solid #333 !important; color: #fff !important; padding: 14px; border-radius: 12px; width: 100%; outline: none; font-size: 11px; }
-        .btn-main { background: linear-gradient(135deg, #3b82f6, #6366f1); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-main:active { transform: scale(0.98); }
-        .oracle-box { border-left: 4px solid #06b6d4; background: linear-gradient(90deg, rgba(6,182,212,0.1), transparent); }
-        .alarm-card { background: rgba(249, 115, 22, 0.05); border: 1px solid rgba(249, 115, 22, 0.2); }
+        input, select { background: rgba(0,0,0,0.6) !important; border: 1px solid #333 !important; color: #fff !important; padding: 10px; border-radius: 10px; font-size: 11px; width: 100%; }
+        .btn-action { background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 10px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .medal { filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
+        .medal-unlocked { filter: grayscale(0); opacity: 1; transform: scale(1.1); }
     </style>
 </head>
 <body class="p-4 pb-32">
     <div class="bg-nebula"></div>
 
-    <header class="glass p-5 mb-4 flex justify-between items-center relative overflow-hidden">
+    <header class="glass p-5 mb-4 flex justify-between items-center border-b-2 border-blue-500">
         <div>
-            <p class="text-[7px] text-cyan-400 font-bold uppercase tracking-widest mb-1">Capital Operativo</p>
-            <p class="text-2xl font-bold tracking-tighter text-white">$<span id="oro-total">0.00</span></p>
+            <p class="text-[8px] text-blue-400 font-bold uppercase mb-1">Efectivo Disp.</p>
+            <p class="text-2xl font-bold">$<span id="oro-total">0.00</span></p>
         </div>
         <div class="text-right">
-            <span class="text-orange-500 font-bold text-[10px] block mb-1">🔥 RACHA: <span id="streak-val">1</span></span>
-            <p class="text-[9px] bg-white/10 px-3 py-1 rounded-full font-bold">LVL <span id="lvl">1</span></p>
+            <span class="text-orange-500 font-bold text-xs">🔥 <span id="streak-val">1</span></span>
+            <p class="text-[9px] bg-white/10 px-2 py-1 rounded mt-1 font-bold">LVL <span id="lvl">1</span></p>
         </div>
     </header>
 
-    <section class="glass p-4 mb-4 oracle-box">
-        <div class="flex items-center gap-2 mb-2">
-            <span class="animate-pulse">🧠</span>
-            <p class="text-[8px] font-bold text-cyan-400 uppercase">Análisis del Mentor IA</p>
-        </div>
-        <p id="ia-advice" class="text-[10px] italic text-gray-300 leading-relaxed">
-            "Esperando datos para analizar tu rendimiento..."
-        </p>
-    </section>
-
-    <nav class="grid grid-cols-5 gap-2 mb-6">
-        <button onclick="tab('misiones')" class="glass p-3 text-[6px] font-bold uppercase">Misiones</button>
-        <button onclick="tab('boveda')" class="glass p-3 text-[6px] font-bold uppercase text-yellow-500">Bóveda</button>
-        <button onclick="tab('alarmas')" class="glass p-3 text-[6px] font-bold uppercase text-orange-400">Alarmas</button>
-        <button onclick="tab('stock')" class="glass p-3 text-[6px] font-bold uppercase text-blue-400">Stock</button>
-        <button onclick="tab('stats')" class="glass p-3 text-[6px] font-bold uppercase text-purple-400">Logs</button>
+    <nav class="grid grid-cols-5 gap-1 mb-6">
+        <button onclick="tab('misiones')" class="glass p-2 text-[6px] font-bold">ORDENES</button>
+        <button onclick="tab('calc')" class="glass p-2 text-[6px] font-bold text-green-400">CALC</button>
+        <button onclick="tab('boveda')" class="glass p-2 text-[6px] font-bold text-yellow-500">BOVEDA</button>
+        <button onclick="tab('logros')" class="glass p-2 text-[6px] font-bold text-purple-400">LOGROS</button>
+        <button onclick="tab('alarmas')" class="glass p-2 text-[6px] font-bold text-orange-400">ALARMAS</button>
     </nav>
 
     <div id="tab-misiones" class="tab-content active-tab">
-        <div id="lista-misiones" class="space-y-3 mb-4"></div>
-        <div class="glass p-4">
-            <input id="new-mision" type="text" placeholder="¿Cuál es la misión de hoy?" class="mb-3">
-            <button onclick="addMision()" class="btn-main w-full text-[9px]">REGISTRAR ORDEN</button>
-        </div>
+        <div id="lista-misiones" class="space-y-3 mb-6"></div>
+        <div class="glass p-4"><input id="new-mision" type="text" placeholder="Nueva orden de trabajo..." class="mb-2"><button onclick="addMision()" class="btn-action w-full p-3 text-[9px]">AÑADIR ORDEN</button></div>
     </div>
 
-    <div id="tab-alarmas" class="tab-content">
-        <h2 class="text-orange-400 font-bold mb-4 text-[10px] uppercase">Recordatorios & Alertas ⏰</h2>
-        <div class="glass p-4 mb-4 space-y-3">
-            <input id="alarm-text" type="text" placeholder="¿Qué debemos recordarte?">
-            <input id="alarm-time" type="time">
-            <button onclick="addAlarm()" class="btn-main bg-orange-600 w-full text-[9px]">PROGRAMAR ALARMA</button>
+    <div id="tab-calc" class="tab-content">
+        <h2 class="text-green-400 font-bold mb-4 text-[10px] uppercase">Calculadora Presupuesto</h2>
+        <div class="glass p-4 space-y-3 mb-4">
+            <input id="calc-item" type="text" placeholder="Nombre del Producto/Servicio">
+            <div class="grid grid-cols-2 gap-2">
+                <input id="calc-costo" type="number" placeholder="Costo Material $">
+                <select id="calc-unidad">
+                    <option value="gr">Gramos</option><option value="kg">Kilos</option>
+                    <option value="mt">Metros</option><option value="un">Unidad</option>
+                    <option value="ltr">Litros</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <input id="calc-rinde" type="number" placeholder="Rinde Total">
+                <input id="calc-uso" type="number" placeholder="Uso Real">
+            </div>
+            <div class="glass p-3 bg-white/5">
+                <p class="text-[8px] text-gray-400 mb-2">MARGEN GANANCIA (%)</p>
+                <input id="calc-margen" type="number" value="50">
+            </div>
+            <button onclick="generarPresupuesto()" class="btn-action bg-green-600 w-full p-3 text-[9px]">CALCULAR Y LISTAR</button>
         </div>
-        <div id="lista-alarmas" class="space-y-2"></div>
+        <div id="res-presupuesto" class="glass p-4 text-center hidden border-2 border-green-500/30">
+            <p class="text-[10px] text-white font-bold" id="res-txt-final">Precio Sugerido: $0.00</p>
+            <button onclick="enviarWhatsApp()" class="mt-3 bg-green-500 text-black font-bold p-2 rounded text-[8px] w-full">ENVIAR POR WHATSAPP 📱</button>
+        </div>
     </div>
 
     <div id="tab-boveda" class="tab-content">
-        <div class="glass p-5 mb-4 border-l-4 border-yellow-500">
-            <p class="text-[10px] font-bold text-yellow-500 mb-2 uppercase">🎯 META: <span id="meta-nombre">---</span></p>
-            <div class="w-full bg-white/5 h-2 rounded-full mb-3"><div id="meta-progreso" class="bg-yellow-400 h-full rounded-full" style="width: 0%"></div></div>
-            <div class="grid grid-cols-2 gap-2">
-                <input id="ahorro-monto" type="number" placeholder="Monto $">
-                <button onclick="saveMoney()" class="btn-main bg-yellow-600 p-2 text-[8px]">GUARDAR</button>
-            </div>
+        <div class="glass p-4 mb-4 border-l-4 border-red-500">
+            <input id="gasto-n" type="text" placeholder="¿En qué gastaste?" class="mb-2">
+            <input id="gasto-m" type="number" placeholder="Monto $" class="mb-2">
+            <button onclick="subMoney()" class="btn-action bg-red-600 w-full p-2 text-[8px]">RESTAR GASTO</button>
         </div>
-        <div class="glass p-4 border-l-4 border-red-500">
-            <p class="text-[9px] font-bold text-red-400 mb-3 uppercase italic">Gasto detectado:</p>
-            <input id="gasto-nombre" type="text" placeholder="Descripción del gasto" class="mb-2">
-            <input id="gasto-monto" type="number" placeholder="Monto $" class="mb-3">
-            <button onclick="subMoney()" class="btn-main bg-red-600 w-full text-[9px]">RESTAR DE MI ORO</button>
+        <div id="lista-metas" class="space-y-3 mb-4"></div>
+        <div class="glass p-4 border-l-4 border-yellow-500">
+            <input id="meta-name" type="text" placeholder="Nombre de la Meta" class="mb-2">
+            <input id="meta-target" type="number" placeholder="Monto objetivo $" class="mb-2">
+            <button onclick="addMeta()" class="btn-action bg-yellow-600 w-full p-2 text-[8px]">CREAR META</button>
         </div>
     </div>
 
-    <div id="tab-stock" class="tab-content">
-        <div class="glass p-4 mb-4 space-y-2">
-            <input id="inv-nombre" type="text" placeholder="Insumo (Ej: Tela Terry)">
-            <div class="grid grid-cols-2 gap-2">
-                <input id="inv-costo" type="number" placeholder="Costo Total $">
-                <input id="inv-rinde" type="number" placeholder="Rinde (gr/mt)">
-            </div>
-            <button onclick="addInventario()" class="btn-main bg-blue-600 w-full text-[9px]">AÑADIR AL ALMACÉN</button>
+    <div id="tab-logros" class="tab-content">
+        <h2 class="text-purple-400 font-bold mb-4 text-[10px] uppercase">Tus Medallas 🎖️</h2>
+        <div class="grid grid-cols-3 gap-4 text-center">
+            <div id="medal-1" class="medal"> <p class="text-2xl">💰</p> <p class="text-[7px]">PRIMER COBRO</p> </div>
+            <div id="medal-2" class="medal"> <p class="text-2xl">🔥</p> <p class="text-[7px]">RACHA 3 DÍAS</p> </div>
+            <div id="medal-3" class="medal"> <p class="text-2xl">🎯</p> <p class="text-[7px]">META CUMPLIDA</p> </div>
+            <div id="medal-4" class="medal"> <p class="text-2xl">💎</p> <p class="text-[7px]">NIVEL 5</p> </div>
+            <div id="medal-5" class="medal"> <p class="text-2xl">🚀</p> <p class="text-[7px]">CAPITAL $100</p> </div>
+            <div id="medal-6" class="medal"> <p class="text-2xl">🛡️</p> <p class="text-[7px]">ADMIN PRO</p> </div>
         </div>
-        <div id="lista-inventario" class="space-y-2"></div>
-    </div>
-
-    <div id="tab-stats" class="tab-content">
-        <div id="lista-historial" class="space-y-2 max-h-96 overflow-y-auto"></div>
-    </div>
+    </script>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('titan-oracle-v11')) || {
-            oro: 0, ahorrado: 0, metaNombre: "N/A", metaTarget: 0,
-            misiones: [], inventory: [], logs: [], alarmas: [], streak: 1, lastLogin: new Date().toLocaleDateString()
+        let data = JSON.parse(localStorage.getItem('titan-boss-v13')) || {
+            oro: 0, misiones: [], metas: [], logs: [], streak: 1, lastLogin: new Date().toLocaleDateString(), logros: []
         };
 
-        window.onload = () => { updateUI(); checkAlarms(); runOracle(); };
+        let tempPresupuesto = { item: "", total: 0 };
 
-        // --- EL ORÁCULO IA (CONSEJOS SEGÚN ACCIÓN) ---
-        function runOracle() {
-            const advice = document.getElementById('ia-advice');
-            const balance = data.logs.filter(l => l.tipo === 'ingreso').reduce((a,b)=>a+b.monto,0) - data.logs.filter(l => l.tipo === 'egreso').reduce((a,b)=>a+b.monto,0);
+        window.onload = () => { updateUI(); checkLogros(); };
 
-            if(data.misiones.length > 3) {
-                advice.innerText = "IA: Tienes muchas misiones pendientes. Enfócate en cerrar una antes de aceptar más pedidos para mantener la calidad.";
-            } else if(data.oro < 10 && data.logs.length > 0) {
-                advice.innerText = "IA: Tu Oro está bajo. Revisa tus últimos gastos o sube tu margen de ganancia en la calculadora.";
-            } else if(data.ahorrado >= data.metaTarget && data.metaTarget > 0) {
-                advice.innerText = "IA: ¡FELICIDADES! Has alcanzado tu meta. Es momento de reinvertir y establecer un objetivo más grande.";
-            } else if(data.streak > 3) {
-                advice.innerText = "IA: Llevas " + data.streak + " días de racha. Tu disciplina está construyendo un imperio.";
-            } else {
-                advice.innerText = "IA: Registra tu primera venta del día para ver cómo crece tu gráfica de rendimiento.";
-            }
+        function tab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+            document.getElementById('tab-' + t).classList.add('active-tab');
         }
 
-        // --- SISTEMA DE ALARMAS ---
-        function addAlarm() {
-            const txt = document.getElementById('alarm-text').value;
-            const time = document.getElementById('alarm-time').value;
-            if(!txt || !time) return;
-            data.alarmas.push({ txt, time, active: true, id: Date.now() });
-            save(); renderAlarms();
-            document.getElementById('alarm-text').value = "";
+        function generarPresupuesto() {
+            const item = document.getElementById('calc-item').value || "Producto";
+            const costo = parseFloat(document.getElementById('calc-costo').value);
+            const rinde = parseFloat(document.getElementById('calc-rinde').value);
+            const uso = parseFloat(document.getElementById('calc-uso').value);
+            const marg = parseFloat(document.getElementById('calc-margen').value);
+            
+            if(isNaN(costo) || isNaN(rinde) || isNaN(uso)) return;
+            
+            const costoBase = (costo / rinde) * uso;
+            const precioFinal = costoBase + (costoBase * (marg / 100));
+            
+            tempPresupuesto = { item, total: precioFinal.toFixed(2) };
+            
+            document.getElementById('res-presupuesto').classList.remove('hidden');
+            document.getElementById('res-txt-final').innerText = `Presupuesto para ${item}: $${tempPresupuesto.total}`;
         }
 
-        function renderAlarms() {
-            document.getElementById('lista-alarmas').innerHTML = data.alarmas.map(a => `
-                <div class="glass p-3 flex justify-between items-center alarm-card">
-                    <div>
-                        <p class="text-[9px] font-bold uppercase">${a.txt}</p>
-                        <p class="text-[8px] text-orange-400">⏰ ${a.time}</p>
-                    </div>
-                    <button onclick="removeAlarm(${a.id})" class="text-red-500 font-bold text-[10px]">ELIMINAR</button>
-                </div>
-            `).join('');
+        function enviarWhatsApp() {
+            const msg = `¡Hola! 👋 Te envío el presupuesto para *${tempPresupuesto.item}*.\n\n💰 *Total:* $${tempPresupuesto.total}\n\nQuedo atento a tu confirmación. ¡Saludos!`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        function checkAlarms() {
-            setInterval(() => {
-                const now = new Date();
-                const cur = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-                data.alarmas.forEach(a => {
-                    if(a.active && a.time === cur) {
-                        alert("🚨 RECORDATORIO: " + a.txt);
-                        a.active = false; save(); renderAlarms();
-                    }
-                });
-            }, 30000);
-        }
-
-        function removeAlarm(id) {
-            data.alarmas = data.alarmas.filter(a => a.id !== id);
-            save(); renderAlarms();
-        }
-
-        // --- SISTEMA DE LOGS Y DINERO ---
-        function addLog(tipo, desc, monto) {
-            data.logs.unshift({ tipo, desc, monto, fecha: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            runOracle();
-        }
-
-        function completar(id) {
-            const m = prompt("INGRESO POR ESTA MISIÓN $:");
-            if(!m || isNaN(m)) return;
-            const val = parseFloat(m);
-            data.oro += val;
-            addLog('ingreso', data.misiones.find(x => x.id === id).texto, val);
+        function cobrar(id) {
+            const m = parseFloat(prompt("¿Cuánto cobraste? $"));
+            if(isNaN(m)) return;
+            data.oro += m;
             data.misiones = data.misiones.filter(x => x.id !== id);
-            save(); updateUI();
+            if(!data.logros.includes(1)) data.logros.push(1);
+            save(); updateUI(); checkLogros();
         }
 
-        function subMoney() {
-            const n = document.getElementById('gasto-nombre').value;
-            const m = parseFloat(document.getElementById('gasto-monto').value);
-            if(!n || isNaN(m)) return;
-            data.oro -= m;
-            addLog('egreso', n, m);
-            document.getElementById('gasto-nombre').value = ""; document.getElementById('gasto-monto').value = "";
-            save(); updateUI();
+        function checkLogros() {
+            if(data.streak >= 3) if(!data.logros.includes(2)) data.logros.push(2);
+            if(data.oro >= 100) if(!data.logros.includes(5)) data.logros.push(5);
+            if(Math.floor(data.oro / 500) + 1 >= 5) if(!data.logros.includes(4)) data.logros.push(4);
+            
+            data.logros.forEach(id => {
+                const el = document.getElementById('medal-' + id);
+                if(el) el.classList.add('medal-unlocked');
+            });
         }
 
-        function saveMoney() {
-            const m = parseFloat(document.getElementById('ahorro-monto').value);
-            if(!m || m > data.oro) return;
-            data.oro -= m; data.ahorrado += m;
-            addLog('ahorro', "Para " + data.metaNombre, m);
-            document.getElementById('ahorro-monto').value = "";
-            save(); updateUI();
-        }
-
-        // --- UI CORE ---
         function updateUI() {
             document.getElementById('oro-total').innerText = data.oro.toFixed(2);
             document.getElementById('streak-val').innerText = data.streak;
             document.getElementById('lvl').innerText = Math.floor(data.oro / 500) + 1;
-            document.getElementById('meta-nombre').innerText = data.metaNombre;
-            const pct = (data.ahorrado / data.metaTarget) * 100 || 0;
-            document.getElementById('meta-progreso').style.width = Math.min(100, pct) + "%";
-            
-            renderMisiones(); renderAlarms(); renderInventario(); renderHistorial();
-        }
-
-        function renderMisiones() {
-            document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `
-                <div class="glass p-4 flex justify-between items-center border-l-4 border-blue-500">
-                    <span class="text-[10px] font-bold uppercase">${m.texto}</span>
-                    <button onclick="completar(${m.id})" class="btn-main px-4 py-2 text-[8px]">COBRAR</button>
-                </div>
-            `).join('');
-        }
-
-        function renderHistorial() {
-            document.getElementById('lista-historial').innerHTML = data.logs.map(l => `
-                <div class="glass p-3 flex justify-between items-center text-[8px] mb-2 ${l.tipo==='ingreso'?'border-l-2 border-green-500':'border-l-2 border-red-500'}">
-                    <span>${l.desc}</span>
-                    <span class="${l.tipo==='ingreso'?'text-green-400':'text-red-400'}">${l.tipo==='ingreso'?'+':'-'}$${l.monto.toFixed(2)}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderInventario() {
-            document.getElementById('lista-inventario').innerHTML = data.inventory.map((m, i) => `
-                <div class="glass p-3 flex justify-between text-[9px]"><span>${m.n}</span><button onclick="data.inventory.splice(${i},1); save(); renderInventario();" class="text-red-500">BORRAR</button></div>
-            `).join('');
-        }
-
-        function addInventario() {
-            const n = document.getElementById('inv-nombre').value;
-            const c = parseFloat(document.getElementById('inv-costo').value);
-            const r = parseFloat(document.getElementById('inv-rinde').value);
-            if(!n || isNaN(c)) return;
-            data.inventory.push({ n, c, r }); save(); renderInventario();
-            document.getElementById('inv-nombre').value = "";
+            renderMisiones();
+            renderMetas();
         }
 
         function addMision() {
@@ -256,12 +171,51 @@
             document.getElementById('new-mision').value = ""; save(); updateUI();
         }
 
-        function tab(t) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
-            document.getElementById('tab-' + t).classList.add('active-tab');
+        function renderMisiones() {
+            document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `
+                <div class="glass p-4 flex justify-between items-center border-l-4 border-blue-500">
+                    <span class="text-[9px] font-bold uppercase">${m.texto}</span>
+                    <button onclick="cobrar(${m.id})" class="btn-action px-4 py-2 text-[7px] bg-green-600">COBRAR $</button>
+                </div>
+            `).join('');
         }
 
-        function save() { localStorage.setItem('titan-oracle-v11', JSON.stringify(data)); }
+        function addMeta() {
+            const n = document.getElementById('meta-name').value;
+            const t = parseFloat(document.getElementById('meta-target').value);
+            if(!n || isNaN(t)) return;
+            data.metas.push({ id: Date.now(), nombre: n, target: t, ahorrado: 0 });
+            save(); updateUI();
+        }
+
+        function abonarMeta(id) {
+            const m = parseFloat(prompt("¿Cuánto vas a abonar hoy? $"));
+            if(isNaN(m) || m > data.oro) return;
+            const meta = data.metas.find(x => x.id === id);
+            meta.ahorrado += m;
+            data.oro -= m;
+            if(meta.ahorrado >= meta.target && !data.logros.includes(3)) data.logros.push(3);
+            save(); updateUI(); checkLogros();
+        }
+
+        function renderMetas() {
+            document.getElementById('lista-metas').innerHTML = data.metas.map(m => `
+                <div class="glass p-3 border-b border-yellow-500/20">
+                    <p class="text-[9px] font-bold uppercase">${m.nombre} ($${m.ahorrado}/${m.target})</p>
+                    <button onclick="abonarMeta(${m.id})" class="mt-2 bg-yellow-600 text-black px-4 py-1 rounded text-[7px] font-bold">ABONAR</button>
+                </div>
+            `).join('');
+        }
+
+        function subMoney() {
+            const m = parseFloat(document.getElementById('gasto-m').value);
+            if(isNaN(m)) return;
+            data.oro -= m;
+            document.getElementById('gasto-n').value = ""; document.getElementById('gasto-m').value = "";
+            save(); updateUI();
+        }
+
+        function save() { localStorage.setItem('titan-boss-v13', JSON.stringify(data)); }
     </script>
 </body>
 </html>
