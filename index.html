@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mastermind v36 🔥 COMPLETE</title>
+    <title>Mastermind v38 💎 Dinámico</title>
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fuente -->
@@ -13,19 +13,20 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
-    <!-- jsPDF para PDF premium -->
+    <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <style>
+        /* Estilos base */
         body {
             font-family: 'JetBrains Mono', monospace;
-            background: #010103;
+            background: #0a0a0f;
             color: #fff;
             min-height: 100vh;
             transition: background 0.3s, color 0.3s;
         }
         body.light-mode {
-            background: #f5f5f5;
+            background: #f0f0f5;
             color: #1a1a1a;
         }
         body.light-mode .glass {
@@ -37,42 +38,192 @@
             border-color: #ccc !important;
             color: #000 !important;
         }
+
+        /* Estilos de vidrio con neón */
         .glass {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(20px);
+            background: rgba(20, 20, 30, 0.6);
+            border: 1px solid rgba(100, 100, 255, 0.2);
+            backdrop-filter: blur(12px);
             border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
         }
+        .glass:hover {
+            border-color: rgba(100, 100, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(100, 100, 255, 0.2);
+        }
+
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
-        
+
+        /* Inputs con estilo cyber */
+        input, select, textarea {
+            background: rgba(10, 10, 20, 0.8) !important;
+            border: 1px solid #4f46e5 !important;
+            color: #fff !important;
+            padding: 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #a855f7 !important;
+            box-shadow: 0 0 15px #a855f7;
+            outline: none;
+        }
+
+        /* Botones principales */
+        .btn-action {
+            background: linear-gradient(135deg, #4f46e5, #a855f7);
+            padding: 18px;
+            border-radius: 30px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 10px;
+            width: 100%;
+            cursor: pointer;
+            border: none;
+            color: white;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+        .btn-action:active {
+            transform: scale(0.96);
+            filter: brightness(1.3);
+            box-shadow: 0 4px 20px #a855f7;
+        }
+
+        /* Badges */
         .badge {
             font-size: 8px;
-            padding: 4px 8px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 30px;
             font-weight: 800;
+            text-transform: uppercase;
         }
         .badge-personal { background: #f97316; color: black; }
         .badge-empresa { background: #3b82f6; color: white; }
         .badge-ingreso { background: #22c55e; color: black; }
+        .badge-mision { background: #eab308; color: black; }
 
-        /* Animación de notificación */
+        /* Calculadora Neon */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .calc-btn {
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid #22c55e40;
+            border-radius: 20px;
+            padding: 18px 0;
+            font-size: 16px;
+            font-weight: 800;
+            color: #22c55e;
+            text-shadow: 0 0 8px #22c55e;
+            box-shadow: 0 0 15px #22c55e20;
+            transition: all 0.08s ease;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+        .calc-btn:active {
+            background: #22c55e;
+            color: black;
+            text-shadow: 0 0 20px white;
+            box-shadow: 0 0 40px #22c55e;
+            transform: scale(0.92);
+        }
+        .calc-btn.operator {
+            color: #f97316;
+            border-color: #f9731640;
+            text-shadow: 0 0 8px #f97316;
+        }
+        .calc-btn.operator:active {
+            background: #f97316;
+            color: black;
+            box-shadow: 0 0 40px #f97316;
+        }
+        .calc-btn.equals {
+            background: #22c55e;
+            color: black;
+            text-shadow: 0 0 10px white;
+            grid-column: span 2;
+        }
+
+        /* Navegación */
+        .nav-btn {
+            background: rgba(30, 30, 50, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 12px 0;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #ccc;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .nav-btn:hover {
+            background: rgba(80, 80, 150, 0.3);
+            border-color: #4f46e5;
+            color: white;
+        }
+        .nav-btn:active {
+            transform: scale(0.92);
+            background: #4f46e5;
+        }
+
+        /* Notificación flotante */
         .notificacion-flotante {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            background: linear-gradient(135deg, #4f46e5, #a855f7);
             color: white;
-            padding: 16px 24px;
-            border-radius: 40px;
+            padding: 16px 28px;
+            border-radius: 50px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             z-index: 9999;
             animation: slideIn 0.3s ease;
+            font-weight: bold;
         }
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Info tip */
+        .info-tip {
+            background: rgba(79, 70, 229, 0.15);
+            border: 1px solid #4f46e5;
+            border-radius: 20px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 10px;
+            color: #a5b4fc;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(79,70,229,0.2);
+        }
+
+        /* Tarjetas de misión */
+        .mision-card {
+            background: linear-gradient(145deg, rgba(20,20,40,0.8), rgba(40,40,70,0.8));
+            border-left: 4px solid #eab308;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .mision-card.completada {
+            opacity: 0.5;
+            border-left-color: #22c55e;
         }
     </style>
 </head>
@@ -82,131 +233,144 @@
     <header class="glass p-6 mb-4">
         <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
-                <p class="text-[7px] text-indigo-400 font-bold uppercase italic">Capital Real (Neto)</p>
-                <p class="text-3xl font-bold">$<span id="ganancia-neta">0.00</span></p>
+                <p class="text-[7px] text-indigo-400 font-bold uppercase tracking-wider">Capital Neto</p>
+                <p class="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">$<span id="ganancia-neta">0.00</span></p>
             </div>
             <div class="text-right">
-                <p class="text-[7px] text-red-500 font-bold uppercase italic">Por Cobrar</p>
-                <p class="text-3xl font-bold text-red-400">$<span id="total-deuda">0.00</span></p>
+                <p class="text-[7px] text-red-500 font-bold uppercase tracking-wider">Por Cobrar</p>
+                <p class="text-4xl font-bold text-red-400">$<span id="total-deuda">0.00</span></p>
             </div>
         </div>
 
-        <!-- BARRA DE RACHAS Y TOKENS -->
-        <div class="flex justify-between items-center mb-4 bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 rounded-2xl">
+        <!-- RACHAS Y TOKENS con diseño más vistoso -->
+        <div class="flex justify-between items-center mb-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 p-4 rounded-3xl border border-purple-500/30">
             <div class="flex items-center gap-2">
-                <span class="text-2xl">🔥</span>
+                <div class="text-3xl filter drop-shadow-lg">🔥</div>
                 <div>
-                    <p class="text-[8px] text-purple-300">RACHA ACTUAL</p>
-                    <p class="text-xl font-bold" id="racha-actual">0</p>
+                    <p class="text-[8px] text-purple-300">RACHA</p>
+                    <p class="text-2xl font-bold text-yellow-400" id="racha-actual">0</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span class="text-2xl">🪙</span>
+                <div class="text-3xl">🪙</div>
                 <div>
                     <p class="text-[8px] text-yellow-300">TOKENS</p>
-                    <p class="text-xl font-bold" id="tokens-disponibles">100</p>
+                    <p class="text-2xl font-bold text-emerald-400" id="tokens-disponibles">100</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span class="text-2xl">🏆</span>
+                <div class="text-3xl">🏆</div>
                 <div>
-                    <p class="text-[8px] text-green-300">RACHA MÁXIMA</p>
-                    <p class="text-xl font-bold" id="racha-maxima">0</p>
+                    <p class="text-[8px] text-green-300">MÁXIMA</p>
+                    <p class="text-2xl font-bold text-orange-400" id="racha-maxima">0</p>
                 </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="toggleModo()" class="glass px-4 py-2 text-[10px] rounded-2xl hover:bg-white/10">🌓</button>
+                <button onclick="exportarExcel()" class="glass px-4 py-2 text-[10px] rounded-2xl text-green-400 hover:bg-white/10">📥</button>
+                <button onclick="exportarPDFProfesional()" class="glass px-4 py-2 text-[10px] rounded-2xl text-red-400 hover:bg-white/10">📄</button>
+                <button onclick="sincronizarNube()" class="glass px-4 py-2 text-[10px] rounded-2xl text-blue-400 hover:bg-white/10">☁️</button>
             </div>
         </div>
 
-        <!-- META PROGRESS -->
-        <div class="flex justify-between text-[8px] font-bold mb-1 uppercase text-gray-400">
-            <span id="label-meta-actual">Meta: Sin Definir</span>
-            <span><span id="meta-percent">0</span>%</span>
+        <!-- META PROGRESS con diseño mejorado -->
+        <div class="flex justify-between text-[9px] font-bold mb-2 uppercase text-gray-400">
+            <span id="label-meta-actual" class="text-indigo-300">Meta: Sin Definir</span>
+            <span class="text-purple-300"><span id="meta-percent">0</span>%</span>
         </div>
-        <div class="progress-bar"><div id="meta-fill" class="progress-fill" style="width: 0%"></div></div>
-
-        <!-- BOTONES DE ACCIÓN -->
-        <div class="flex justify-end gap-2 mt-4">
-            <button onclick="toggleModo()" class="glass px-4 py-2 text-[9px] font-bold">🌓 Modo</button>
-            <button onclick="exportarExcel()" class="glass px-4 py-2 text-[9px] font-bold text-green-400">📥 Excel</button>
-            <button onclick="exportarPDFProfesional()" class="glass px-4 py-2 text-[9px] font-bold text-red-400">📄 PDF Premium</button>
-            <button onclick="sincronizarNube()" class="glass px-4 py-2 text-[9px] font-bold text-blue-400">☁️ Sincronizar</button>
-            <button onclick="iniciarTour()" class="glass px-4 py-2 text-[9px] font-bold text-yellow-400">🎓 Tour</button>
+        <div class="progress-bar h-3 bg-gray-800 rounded-full overflow-hidden">
+            <div id="meta-fill" class="progress-fill h-full bg-gradient-to-r from-indigo-500 to-purple-600" style="width: 0%"></div>
         </div>
     </header>
 
-    <!-- NAV (11 pestañas) -->
-    <nav class="grid grid-cols-6 gap-2 mb-6">
-        <button onclick="tab('misiones')" class="nav-btn glass p-3 text-[7px] font-bold uppercase">📋 Proyectos</button>
-        <button onclick="tab('cobranza')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-red-400">⚖️ Cobros</button>
-        <button onclick="tab('espia')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-cyan-400">🕵️ Espía</button>
-        <button onclick="tab('brain')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-purple-400">🧠 Cerebro (IA)</button>
-        <button onclick="tab('calc')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-green-400">📊 Cotizar</button>
-        <button onclick="tab('boveda')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-yellow-400">💰 Bóveda</button>
-        <button onclick="tab('reportes')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-pink-400">📈 Reportes</button>
-        <button onclick="tab('meta')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-blue-400">🎯 Meta</button>
-        <button onclick="tab('more')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-orange-400">⏰ Alarmas</button>
-        <button onclick="tab('planes')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-yellow-400">💎 Planes</button>
-        <button onclick="tab('ayuda')" class="nav-btn glass p-3 text-[7px] font-bold uppercase text-gray-400">❓ Ayuda</button>
+    <!-- NAV (12 pestañas organizadas) -->
+    <nav class="grid grid-cols-6 gap-3 mb-8">
+        <button onclick="tab('misiones')" class="nav-btn">📋 Trabajos</button>
+        <button onclick="tab('cobranza')" class="nav-btn text-red-400">⚖️ Deudas</button>
+        <button onclick="tab('espia')" class="nav-btn text-cyan-400">🕵️ Espía</button>
+        <button onclick="tab('brain')" class="nav-btn text-purple-400">🧠 Cerebro</button>
+        <button onclick="tab('calc')" class="nav-btn text-green-400">📊 Cotizar</button>
+        <button onclick="tab('boveda')" class="nav-btn text-yellow-400">💰 Bóveda</button>
+        <button onclick="tab('presupuesto')" class="nav-btn text-emerald-400">📦 Presupuesto</button>
+        <button onclick="tab('misiones-sec')" class="nav-btn text-amber-400">🎯 Misiones</button>
+        <button onclick="tab('reportes')" class="nav-btn text-pink-400">📈 Reportes</button>
+        <button onclick="tab('meta')" class="nav-btn text-blue-400">🎯 Meta</button>
+        <button onclick="tab('more')" class="nav-btn text-orange-400">⏰ Alarmas</button>
+        <button onclick="tab('planes')" class="nav-btn text-yellow-400">💎 Planes</button>
     </nav>
 
     <!-- ========== PESTAÑAS ========== -->
-    <!-- MISIONES -->
+
+    <!-- TRABAJOS (antes Proyectos) - AHORA GENERAN INGRESOS DIRECTOS -->
     <div id="tab-misiones" class="tab-content active-tab">
-        <div class="info-tip">📋 Proyectos: Registra trabajos. Al finalizar, genera deuda.</div>
-        <div id="lista-misiones" class="space-y-3 mb-6"></div>
+        <div class="ia-box p-5 mb-4 glass border-l-4 border-indigo-500">
+            <p class="text-[8px] font-black text-indigo-400 uppercase tracking-widest">🤖 Mastermind IA - Status</p>
+            <p id="ia-inicio" class="text-[11px] italic text-indigo-200">Cargando información...</p>
+        </div>
+        <div class="info-tip">
+            <span class="text-2xl">📋</span>
+            <span><strong>Trabajos:</strong> Registra tus tareas o proyectos. Al completarlos, recibirás un ingreso directo.</span>
+        </div>
+        <div id="lista-trabajos" class="space-y-3 mb-6"></div>
         <div class="glass p-5">
-            <input id="new-mision" type="text" placeholder="¿Qué proyecto inicias hoy?">
-            <button onclick="addMision()" class="btn-action">Registrar Trabajo 🛠️</button>
+            <input id="new-trabajo" type="text" placeholder="Ej: Diseñar logo, Reparación de PC, Consultoría...">
+            <button onclick="addTrabajo()" class="btn-action">➕ Registrar Trabajo</button>
         </div>
     </div>
 
-    <!-- COBRANZA (con adjuntos) -->
+    <!-- DEUDAS (antes Cobranza) - AHORA INDEPENDIENTE -->
     <div id="tab-cobranza" class="tab-content">
-        <div class="info-tip">⚖️ Cobros: Gestiona deudas y adjunta archivos.</div>
-        <h2 class="text-xs font-bold text-red-400 uppercase mb-4">⚠️ Facturas Pendientes</h2>
+        <div class="info-tip">
+            <span class="text-2xl">⚖️</span>
+            <span><strong>Deudas:</strong> Dinero que te deben. Puedes registrar abonos y pagos totales.</span>
+        </div>
+        <h2 class="text-xs font-bold text-red-400 uppercase mb-4 tracking-wider">💰 Deudas Pendientes</h2>
         <div class="glass p-5 mb-4">
+            <h3 class="text-[10px] font-bold text-red-400 mb-2">➕ Registrar Nueva Deuda</h3>
             <input id="nuevo-deudor-nombre" type="text" placeholder="Nombre del deudor">
             <input id="nuevo-deudor-monto" type="number" placeholder="Monto que debe $">
-            <input id="nuevo-deudor-desc" type="text" placeholder="Concepto">
+            <input id="nuevo-deudor-desc" type="text" placeholder="Concepto (opcional)">
             <input type="file" id="adjunto-deudor" accept="image/*,.pdf">
-            <button onclick="registrarDeudorDirecto()" class="btn-action" style="background: #dc2626;">Guardar Deuda 📝</button>
+            <button onclick="registrarDeudorDirecto()" class="btn-action" style="background: #dc2626;">📝 Registrar Deuda</button>
         </div>
-        <div id="lista-cobranza" class="space-y-3"></div>
+        <div id="lista-deudas" class="space-y-3"></div>
     </div>
 
-    <!-- ESPÍA -->
+    <!-- ESPÍA (sin cambios) -->
     <div id="tab-espia" class="tab-content">
         <div class="info-tip">🕵️ Espía: Analiza competencia y recibe consejos.</div>
         <div class="glass p-5 mb-4">
-            <input id="spy-negocio" placeholder="Competencia">
-            <input id="spy-item" placeholder="Producto">
+            <input id="spy-negocio" placeholder="Nombre de la competencia">
+            <input id="spy-item" placeholder="Producto o servicio">
             <input id="spy-precio" type="number" placeholder="Precio $">
             <button onclick="addSpy()" class="btn-action" style="background: #0891b2;">Analizar 🧠</button>
         </div>
         <div id="lista-espia" class="space-y-3"></div>
     </div>
 
-    <!-- CEREBRO CON GEMINI REAL -->
+    <!-- CEREBRO (simulado por ahora) -->
     <div id="tab-brain" class="tab-content">
-        <div class="info-tip">🧠 Cerebro con Gemini real. Usa tokens (5 por consulta).</div>
-        <h2 class="text-xs font-bold text-purple-400 mb-4">🧠 Consulta a Gemini</h2>
+        <div class="info-tip">🧠 Cerebro: Consulta estrategias (modo simulación).</div>
+        <h2 class="text-xs font-bold text-purple-400 mb-4">🧠 Central de Consultas</h2>
         <div class="glass p-5">
             <select id="brain-mode">
-                <option value="research">Investigación (15 tokens)</option>
-                <option value="copy">Redacción (5 tokens)</option>
-                <option value="strategy">Estrategia (25 tokens)</option>
+                <option value="research">Investigación de Mercado</option>
+                <option value="copy">Redacción de Mensajes</option>
+                <option value="strategy">Estrategia de Negocios</option>
             </select>
-            <textarea id="brain-query" class="w-full" rows="4" placeholder="Ej: Escribe un mensaje para cobrar una deuda..."></textarea>
-            <button onclick="consultarGeminiReal()" class="btn-action" style="background: #7e22ce;">Consultar (gasta tokens) ⚡</button>
-            <div id="brain-response" class="mt-4 p-4 bg-white/5 rounded-xl text-[10px] hidden"></div>
+            <textarea id="brain-query" class="w-full" rows="4" placeholder="Ej: ¿Cómo puedo mejorar mis ventas?"></textarea>
+            <button onclick="askBrainSimulado()" class="btn-action" style="background: #7e22ce;">Consultar (simulado)</button>
+            <div id="brain-response" class="mt-4 p-4 bg-white/5 rounded-xl text-[10px] hidden border-l-2 border-purple-500"></div>
         </div>
     </div>
 
     <!-- CALCULADORA (igual) -->
     <div id="tab-calc" class="tab-content">
-        <!-- ... mantener calculadora anterior ... -->
+        <div class="info-tip">📊 Calculadora neon para cotizaciones rápidas.</div>
         <div class="glass p-5">
             <div class="bg-black/50 p-4 rounded-2xl mb-4 text-right">
-                <p id="calc-display" class="text-3xl font-bold text-green-400">0</p>
+                <p id="calc-display" class="text-4xl font-bold text-green-400">0</p>
+                <p class="text-[8px] text-green-400 uppercase tracking-wider">Cotización / Calculadora</p>
             </div>
             <div class="calc-grid">
                 <button class="calc-btn" onclick="calcInput('7')">7</button>
@@ -226,32 +390,32 @@
                 <button class="calc-btn operator" onclick="calcClear()">C</button>
                 <button class="calc-btn operator" onclick="calcSetOperator('+')">+</button>
                 <button class="calc-btn equals" onclick="calcEquals()">=</button>
-                <button class="calc-btn" onclick="calcToCotizacion()">💰 USAR</button>
+                <button class="calc-btn" onclick="calcToCotizacion()">💰 Usar</button>
             </div>
-            <div class="grid grid-cols-2 gap-2 mt-4">
+            <div class="grid grid-cols-2 gap-3 mt-4">
                 <input id="calc-costo" type="number" placeholder="Insumos $">
                 <input id="calc-margen" type="number" placeholder="Ganancia %">
-                <button onclick="generarCotizacion()" class="btn-action col-span-2" style="background: #16a34a;">Calcular</button>
+                <button onclick="generarCotizacion()" class="btn-action col-span-2" style="background: #16a34a;">Calcular Precio Final</button>
             </div>
         </div>
     </div>
 
     <!-- BÓVEDA (con filtros) -->
     <div id="tab-boveda" class="tab-content">
-        <!-- mantener bóveda anterior -->
-        <h2 class="text-xs font-bold text-yellow-500 mb-4">💰 Caja Chica</h2>
+        <div class="info-tip">💰 Bóveda: Control de gastos e ingresos. Filtra por tipo.</div>
+        <h2 class="text-xs font-bold text-yellow-500 mb-4">💰 Movimientos</h2>
         <div class="glass p-4 mb-4">
-            <div class="flex gap-2 mb-2">
-                <input id="filtro-boveda" type="text" placeholder="Buscar...">
-                <select id="filtro-tipo">
+            <div class="flex gap-2 mb-3">
+                <input id="filtro-boveda" type="text" placeholder="Buscar..." class="text-[10px]">
+                <select id="filtro-tipo" class="text-[10px]">
                     <option value="todos">Todos</option>
                     <option value="personal">Personal</option>
                     <option value="empresa">Empresa</option>
                     <option value="ingreso">Ingreso</option>
                 </select>
-                <button onclick="renderBoveda()" class="bg-blue-600 px-3 rounded text-[9px]">Filtrar</button>
+                <button onclick="renderBoveda()" class="bg-indigo-600 px-4 rounded-xl text-[9px] font-bold">Filtrar</button>
             </div>
-            <div id="lista-boveda" class="space-y-2"></div>
+            <div id="lista-boveda" class="space-y-2 max-h-80 overflow-y-auto"></div>
         </div>
         <div class="glass p-5">
             <select id="tipo-transaccion">
@@ -259,14 +423,65 @@
                 <option value="empresa">🏢 Gasto Empresa</option>
                 <option value="ingreso">📈 Ingreso Extra</option>
             </select>
-            <input id="boveda-desc" placeholder="Descripción">
+            <input id="boveda-desc" placeholder="Descripción (ej: compra de materiales)">
             <input id="boveda-monto" type="number" placeholder="Monto $">
-            <button onclick="registrarTransaccion()" class="btn-action" style="background: #ca8a04;">Registrar</button>
+            <button onclick="registrarTransaccion()" class="btn-action" style="background: #ca8a04;">Registrar Movimiento</button>
         </div>
     </div>
 
-    <!-- REPORTES -->
+    <!-- PRESUPUESTO (nueva pestaña) -->
+    <div id="tab-presupuesto" class="tab-content">
+        <div class="info-tip">
+            <span class="text-2xl">📦</span>
+            <span><strong>Presupuesto de Producto:</strong> Agrega insumos, calcula costo total, define margen y obtén precio de venta.</span>
+        </div>
+        <div class="glass p-5 mb-4">
+            <h3 class="text-[10px] font-bold text-emerald-400 mb-2">➕ Agregar Insumo</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <input id="insumo-desc" placeholder="Ej: Harina, tela, etc.">
+                <input id="insumo-costo" type="number" placeholder="Costo unitario $">
+            </div>
+            <button onclick="agregarInsumo()" class="btn-action mt-2" style="background: #10b981;">➕ Agregar Insumo</button>
+        </div>
+        <div id="lista-insumos" class="space-y-2 mb-4"></div>
+        <div class="glass p-5">
+            <div class="flex justify-between text-sm mb-4">
+                <span class="text-gray-400">Costo Total:</span>
+                <span class="text-2xl font-bold text-emerald-400" id="costo-total">$0.00</span>
+            </div>
+            <div class="flex gap-3 items-center">
+                <span class="text-gray-400 text-[10px]">Margen de Ganancia:</span>
+                <input type="range" id="margen-slider" min="0" max="200" value="30" class="w-full">
+                <span id="margen-valor" class="text-emerald-400 font-bold">30%</span>
+            </div>
+            <div class="flex justify-between text-sm mt-4">
+                <span class="text-gray-400">Precio de Venta Sugerido:</span>
+                <span class="text-2xl font-bold text-purple-400" id="precio-venta">$0.00</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Ganancia Estimada:</span>
+                <span class="text-lg font-bold text-green-400" id="ganancia-estimada">$0.00</span>
+            </div>
+            <button onclick="recomendarPrecioIA()" class="btn-action mt-4" style="background: #7e22ce;">🤖 Recomendar precio con IA</button>
+            <div id="ia-recomendacion" class="mt-3 text-[10px] text-purple-300 italic"></div>
+        </div>
+    </div>
+
+    <!-- MISIONES SECUNDARIAS (nueva) -->
+    <div id="tab-misiones-sec" class="tab-content">
+        <div class="info-tip">
+            <span class="text-2xl">🎯</span>
+            <span><strong>Misiones diarias:</strong> Completa desafíos para ganar tokens y mantener tu racha.</span>
+        </div>
+        <div id="lista-misiones" class="space-y-3"></div>
+        <div class="glass p-5 mt-4">
+            <p class="text-[10px] text-gray-400">Las misiones se reinician cada día. ¡Vuelve mañana por más!</p>
+        </div>
+    </div>
+
+    <!-- REPORTES (igual) -->
     <div id="tab-reportes" class="tab-content">
+        <div class="info-tip">📈 Reportes: Visualiza tus finanzas.</div>
         <div class="glass p-4 mb-4">
             <canvas id="grafico-torta" style="height:200px"></canvas>
         </div>
@@ -277,8 +492,9 @@
 
     <!-- META -->
     <div id="tab-meta" class="tab-content">
+        <div class="info-tip">🎯 Define una meta financiera y sigue tu progreso.</div>
         <div class="glass p-5">
-            <input id="m-n" placeholder="Nombre de la meta">
+            <input id="m-n" placeholder="Nombre de la meta (ej: Comprar laptop)">
             <input id="m-v" type="number" placeholder="Monto total $">
             <button onclick="setMeta()" class="btn-action" style="background: #1d4ed8;">Guardar Meta</button>
         </div>
@@ -286,18 +502,19 @@
 
     <!-- ALARMAS -->
     <div id="tab-more" class="tab-content">
+        <div class="info-tip">⏰ Crea recordatorios con notificaciones.</div>
         <div class="glass p-5 mb-4">
-            <input id="a-d" placeholder="¿Qué hay que hacer?">
+            <input id="a-d" placeholder="Descripción">
             <div class="grid grid-cols-2 gap-2">
                 <input id="a-fecha" type="date">
                 <input id="a-h" type="time">
             </div>
-            <button onclick="addAlarma()" class="btn-action" style="background: #ea580c;">Fijar Alarma ⏰</button>
+            <button onclick="addAlarma()" class="btn-action" style="background: #ea580c;">➕ Fijar Alarma</button>
         </div>
         <div id="lista-alarmas" class="space-y-2"></div>
     </div>
 
-    <!-- PLANES (VERSIÓN PAGA) -->
+    <!-- PLANES -->
     <div id="tab-planes" class="tab-content">
         <h2 class="text-xs font-bold text-yellow-500 mb-4">💎 Planes Mastermind</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -324,7 +541,6 @@
                     <li>✓ IA REAL (Gemini)</li>
                     <li>✓ Sincronización nube</li>
                     <li>✓ PDF premium</li>
-                    <li>✓ Sin anuncios</li>
                 </ul>
                 <button onclick="activarPlan('elite')" class="btn-action mt-4 bg-yellow-600">ACTUALIZAR</button>
             </div>
@@ -336,7 +552,6 @@
                     <li>✓ 5000 tokens/mes</li>
                     <li>✓ Negocios ilimitados</li>
                     <li>✓ IA REAL + API</li>
-                    <li>✓ Sincronización</li>
                     <li>✓ Soporte prioritario</li>
                 </ul>
                 <button onclick="activarPlan('corp')" class="btn-action mt-4 bg-purple-800">CONTACTAR</button>
@@ -344,31 +559,29 @@
         </div>
     </div>
 
-    <!-- AYUDA -->
-    <div id="tab-ayuda" class="tab-content">
-        <div class="glass p-5 text-[10px] space-y-2">
-            <p>🔥 <strong>Rachas:</strong> Cada día que usas la app, ganas tokens extra.</p>
-            <p>🪙 <strong>Tokens:</strong> Úsalos para consultar a la IA real.</p>
-            <p>💎 <strong>Plan Élite:</strong> Desbloquea IA real, PDF y nube.</p>
-            <p>📱 <strong>¿Problemas?</strong> Escribe a soporte@mastermind.app</p>
-        </div>
+    <!-- AYUDA (tour) -->
+    <div id="tab-ayuda" class="tab-content hidden">
+        <!-- No necesitamos pestaña ayuda, ya está el tour en botón -->
     </div>
 
     <script>
-        // ========== CONFIGURACIÓN INICIAL ==========
-        // ⚠️ IMPORTANTE: Reemplaza con TU API KEY de Gemini (gratis)
-        const GEMINI_API_KEY = 'AIzaSyBQ-laiwLMhxp8lndhgVwZegcUSGaewS4w'; // PASO 1: Obtén tu key en aistudio.google.com
-        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent';
-
-        // ESTRUCTURA DE DATOS COMPLETA
-        let data = JSON.parse(localStorage.getItem('biz-god-v36')) || {
-            gananciaBase: 0,
+        // ========== ESTRUCTURA DE DATOS CORREGIDA ==========
+        let data = JSON.parse(localStorage.getItem('biz-god-v38')) || {
+            // Ingresos por trabajos completados
+            ingresosTrabajos: 0,
+            // Meta
             metaNombre: "Sin Meta", metaValor: 0,
-            misiones: [],
-            deudas: [],
+            // Trabajos (antes misiones)
+            trabajos: [], // { id, descripcion }
+            // Deudas (independiente)
+            deudas: [], // { id, cliente, monto, desc, adjuntoBase64, adjuntoTipo }
+            // Espía
             espia: [],
+            // Alarmas
             alarmas: [],
-            boveda: [],
+            // Bóveda (gastos e ingresos extras)
+            boveda: [], // { id, tipo, desc, monto }
+            // Rachas
             rachas: {
                 actual: 0,
                 maxima: 0,
@@ -376,18 +589,27 @@
                 historial: []
             },
             tokens: {
-                disponibles: 100, // Tokens gratis iniciales
+                disponibles: 100,
                 totalGanados: 0,
                 totalGastados: 0
             },
-            sonidos: {
-                activados: true
-            },
+            sonidos: { activados: true },
             usuario: {
-                plan: 'free', // free, elite, corp
+                plan: 'free',
                 negocios: 1,
                 fechaExpiracion: null
-            }
+            },
+            // Presupuesto: lista de insumos
+            insumos: [], // { id, desc, costo }
+            // Misiones diarias
+            misionesDiarias: [
+                { id: 1, desc: "Registra un gasto", recompensa: 10, completada: false },
+                { id: 2, desc: "Completa un trabajo", recompensa: 15, completada: false },
+                { id: 3, desc: "Revisa tus deudas", recompensa: 5, completada: false },
+                { id: 4, desc: "Usa la calculadora", recompensa: 5, completada: false },
+                { id: 5, desc: "Crea un presupuesto", recompensa: 10, completada: false }
+            ],
+            fechaUltimaMision: new Date().toDateString()
         };
 
         // ========== FUNCIONES GENERALES ==========
@@ -395,41 +617,381 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
             document.getElementById('tab-' + t).classList.add('active-tab');
             if (t === 'reportes') setTimeout(() => renderGraficos(), 100);
+            if (t === 'presupuesto') actualizarPresupuesto();
+            if (t === 'misiones-sec') renderMisionesDiarias();
         }
 
         window.onload = () => {
-            // Solicitar permiso para notificaciones
             if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
                 Notification.requestPermission();
             }
+            // Verificar si es nuevo día para reiniciar misiones
+            const hoy = new Date().toDateString();
+            if (data.fechaUltimaMision !== hoy) {
+                data.misionesDiarias.forEach(m => m.completada = false);
+                data.fechaUltimaMision = hoy;
+            }
             updateUI();
-            renderMisiones();
+            renderTrabajos();
             renderDeudas();
             renderSpy();
             renderAlarmas();
             renderBoveda();
-            actualizarUIRachas();
-            // Tour automático en primera visita
+            renderInsumos();
+            renderMisionesDiarias();
+            actualizarRachas(); // Esto actualizará racha si corresponde
+            runIA();
             if (!localStorage.getItem('tourVisto')) {
                 setTimeout(() => { iniciarTour(); localStorage.setItem('tourVisto', 'true'); }, 500);
             }
         };
 
-        function save() { localStorage.setItem('biz-god-v36', JSON.stringify(data)); }
+        function save() { localStorage.setItem('biz-god-v38', JSON.stringify(data)); }
 
-        // ========== SISTEMA DE RACHAS Y TOKENS ==========
+        // ========== IA DE INICIO ==========
+        function runIA() {
+            const ia = document.getElementById('ia-inicio');
+            let msj = "";
+            const totalDeuda = data.deudas.reduce((a,b)=>a+b.monto,0);
+            const totalIngresos = data.ingresosTrabajos + data.boveda.filter(t=>t.tipo==='ingreso').reduce((a,b)=>a+b.monto,0);
+            
+            if(data.deudas.length > 0) {
+                msj = `⚠️ Tienes $${totalDeuda} en deudas. `;
+            } else {
+                msj = "✅ Sin deudas pendientes. ";
+            }
+
+            if(data.trabajos.length > 0) {
+                msj += `Tienes ${data.trabajos.length} trabajos en curso. `;
+            }
+
+            if(data.metaValor > 0) {
+                let falta = data.metaValor - getGananciaNeta();
+                msj += `Para tu meta "${data.metaNombre}", faltan $${falta > 0 ? falta.toFixed(2) : 0}.`;
+            } else {
+                msj += "Define una meta en el apartado 🎯.";
+            }
+            ia.innerHTML = msj;
+        }
+
+        // ========== GANANCIA NETA (CORREGIDA) ==========
+        function getGananciaNeta() {
+            const ingresosExtras = data.boveda.filter(t => t.tipo === 'ingreso').reduce((a,b)=>a+b.monto,0);
+            const gastosPersonales = data.boveda.filter(t => t.tipo === 'personal').reduce((a,b)=>a+b.monto,0);
+            const gastosEmpresa = data.boveda.filter(t => t.tipo === 'empresa').reduce((a,b)=>a+b.monto,0);
+            return (data.ingresosTrabajos + ingresosExtras) - (gastosPersonales + gastosEmpresa);
+        }
+
+        // ========== TRABAJOS (antes Proyectos) ==========
+        function addTrabajo() {
+            const desc = document.getElementById('new-trabajo').value;
+            if (!desc) return;
+            data.trabajos.push({ id: Date.now(), descripcion: desc });
+            document.getElementById('new-trabajo').value = "";
+            save();
+            renderTrabajos();
+            actualizarRachas();
+        }
+
+        function renderTrabajos() {
+            const container = document.getElementById('lista-trabajos');
+            if (data.trabajos.length === 0) {
+                container.innerHTML = '<div class="glass p-4 text-center text-gray-500">No hay trabajos registrados.</div>';
+                return;
+            }
+            container.innerHTML = data.trabajos.map(t => `
+                <div class="glass p-4 flex justify-between items-center border-l-4 border-indigo-500">
+                    <span class="text-[10px] font-bold">${t.descripcion}</span>
+                    <button onclick="completarTrabajo(${t.id})" class="bg-indigo-600 px-4 py-2 rounded-xl text-[8px] font-black hover:bg-indigo-700 transition">✅ Completar</button>
+                </div>
+            `).join('');
+        }
+
+        function completarTrabajo(id) {
+            const trabajo = data.trabajos.find(t => t.id === id);
+            if (!trabajo) return;
+            const monto = parseFloat(prompt(`¿Cuánto cobraste por "${trabajo.descripcion}"? $`, "0"));
+            if (isNaN(monto) || monto <= 0) return;
+            
+            // Registrar ingreso
+            data.ingresosTrabajos += monto;
+            data.boveda.push({
+                id: Date.now(),
+                tipo: 'ingreso',
+                desc: `Trabajo: ${trabajo.descripcion}`,
+                monto: monto
+            });
+            
+            // Eliminar trabajo
+            data.trabajos = data.trabajos.filter(t => t.id !== id);
+            
+            // Completar misión si aplica
+            completarMisionPorAccion('Completa un trabajo');
+            
+            save();
+            renderTrabajos();
+            renderBoveda();
+            updateUI();
+            runIA();
+            actualizarRachas();
+            mostrarNotificacion(`💰 Ingreso de $${monto} registrado`, 'success');
+            reproducirSonido('cobro');
+        }
+
+        // ========== DEUDAS (CORREGIDO: abonos no duplican) ==========
+        function registrarDeudorDirecto() {
+            const nombre = document.getElementById('nuevo-deudor-nombre').value;
+            const monto = parseFloat(document.getElementById('nuevo-deudor-monto').value);
+            const desc = document.getElementById('nuevo-deudor-desc').value || "Sin concepto";
+            const fileInput = document.getElementById('adjunto-deudor');
+            
+            if (!nombre || isNaN(monto) || monto <= 0) {
+                mostrarNotificacion('Completa nombre y monto válido', 'error');
+                return;
+            }
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result.split(',')[1];
+                    data.deudas.push({
+                        id: Date.now(),
+                        cliente: nombre,
+                        monto: monto,
+                        desc: desc,
+                        adjuntoBase64: base64,
+                        adjuntoTipo: file.type
+                    });
+                    limpiarCamposDeudor();
+                    save();
+                    renderDeudas();
+                    updateUI();
+                    runIA();
+                    actualizarRachas();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                data.deudas.push({
+                    id: Date.now(),
+                    cliente: nombre,
+                    monto: monto,
+                    desc: desc,
+                    adjuntoBase64: null,
+                    adjuntoTipo: null
+                });
+                limpiarCamposDeudor();
+                save();
+                renderDeudas();
+                updateUI();
+                runIA();
+                actualizarRachas();
+            }
+        }
+
+        function limpiarCamposDeudor() {
+            document.getElementById('nuevo-deudor-nombre').value = "";
+            document.getElementById('nuevo-deudor-monto').value = "";
+            document.getElementById('nuevo-deudor-desc').value = "";
+            document.getElementById('adjunto-deudor').value = "";
+        }
+
+        function renderDeudas() {
+            const container = document.getElementById('lista-deudas');
+            if (data.deudas.length === 0) {
+                container.innerHTML = '<div class="glass p-4 text-center text-gray-500">No hay deudas pendientes.</div>';
+                return;
+            }
+            container.innerHTML = data.deudas.map(d => `
+                <div class="glass p-4 border-l-4 border-red-500 mb-3">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-[11px]">${d.cliente}</span>
+                        <span class="text-red-400 font-bold">$${d.monto.toFixed(2)}</span>
+                    </div>
+                    <p class="text-[8px] text-gray-400 mt-1">${d.desc}</p>
+                    ${d.adjuntoBase64 ? '<span class="text-[7px] text-blue-400">📎 Archivo adjunto</span>' : ''}
+                    <div class="grid grid-cols-2 gap-2 mt-3">
+                        <button onclick="cobrarTotal(${d.id})" class="bg-green-600 py-2 rounded-xl text-[8px] font-bold hover:bg-green-700">✅ Pago Total</button>
+                        <button onclick="abonar(${d.id})" class="bg-yellow-600 py-2 rounded-xl text-[8px] font-bold hover:bg-yellow-700">💸 Abonar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function cobrarTotal(id) {
+            const deuda = data.deudas.find(d => d.id === id);
+            if (!deuda) return;
+            
+            // Ingreso directo
+            data.ingresosTrabajos += deuda.monto;
+            data.boveda.push({
+                id: Date.now(),
+                tipo: 'ingreso',
+                desc: `Pago total de deuda: ${deuda.cliente} - ${deuda.desc}`,
+                monto: deuda.monto
+            });
+            
+            // Eliminar deuda
+            data.deudas = data.deudas.filter(d => d.id !== id);
+            
+            save();
+            renderDeudas();
+            renderBoveda();
+            updateUI();
+            runIA();
+            actualizarRachas();
+            mostrarNotificacion(`💰 Pago de $${deuda.monto} recibido`, 'success');
+            reproducirSonido('cobro');
+        }
+
+        function abonar(id) {
+            const deuda = data.deudas.find(d => d.id === id);
+            if (!deuda) return;
+            
+            const montoAbono = parseFloat(prompt("Monto del abono:", "0"));
+            if (isNaN(montoAbono) || montoAbono <= 0) return;
+            
+            if (montoAbono >= deuda.monto) {
+                // Si abono es mayor o igual, es un pago total
+                cobrarTotal(id);
+                return;
+            }
+            
+            // Reducir deuda
+            deuda.monto -= montoAbono;
+            
+            // Registrar ingreso
+            data.ingresosTrabajos += montoAbono;
+            data.boveda.push({
+                id: Date.now(),
+                tipo: 'ingreso',
+                desc: `Abono de deuda: ${deuda.cliente} - ${deuda.desc}`,
+                monto: montoAbono
+            });
+            
+            save();
+            renderDeudas();
+            renderBoveda();
+            updateUI();
+            runIA();
+            actualizarRachas();
+            mostrarNotificacion(`💸 Abono de $${montoAbono} registrado`, 'success');
+            reproducirSonido('cobro');
+        }
+
+        // ========== MISIONES DIARIAS ==========
+        function renderMisionesDiarias() {
+            const container = document.getElementById('lista-misiones');
+            container.innerHTML = data.misionesDiarias.map(m => `
+                <div class="mision-card ${m.completada ? 'completada' : ''}">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold">${m.desc}</span>
+                        <span class="badge badge-mision">+${m.recompensa}🪙</span>
+                    </div>
+                    ${!m.completada ? `<button onclick="completarMision(${m.id})" class="mt-2 bg-amber-600 px-3 py-1 rounded-xl text-[8px] font-bold">Completar</button>` : '<p class="text-[8px] text-green-400 mt-2">✓ Completada</p>'}
+                </div>
+            `).join('');
+        }
+
+        function completarMision(id) {
+            const mision = data.misionesDiarias.find(m => m.id === id);
+            if (!mision || mision.completada) return;
+            
+            mision.completada = true;
+            data.tokens.disponibles += mision.recompensa;
+            data.tokens.totalGanados += mision.recompensa;
+            
+            save();
+            renderMisionesDiarias();
+            actualizarUIRachas();
+            mostrarNotificacion(`🎯 Misión completada! +${mision.recompensa} tokens`, 'success');
+            reproducirSonido('victoria');
+        }
+
+        function completarMisionPorAccion(descripcion) {
+            const mision = data.misionesDiarias.find(m => m.desc === descripcion);
+            if (mision && !mision.completada) {
+                mision.completada = true;
+                data.tokens.disponibles += mision.recompensa;
+                data.tokens.totalGanados += mision.recompensa;
+                mostrarNotificacion(`🎯 Misión "${descripcion}" completada! +${mision.recompensa} tokens`, 'success');
+                reproducirSonido('victoria');
+            }
+        }
+
+        // ========== PRESUPUESTO ==========
+        function agregarInsumo() {
+            const desc = document.getElementById('insumo-desc').value;
+            const costo = parseFloat(document.getElementById('insumo-costo').value);
+            if (!desc || isNaN(costo) || costo <= 0) return;
+            
+            data.insumos.push({ id: Date.now(), desc, costo });
+            document.getElementById('insumo-desc').value = "";
+            document.getElementById('insumo-costo').value = "";
+            save();
+            renderInsumos();
+            actualizarPresupuesto();
+            actualizarRachas();
+        }
+
+        function renderInsumos() {
+            const container = document.getElementById('lista-insumos');
+            if (data.insumos.length === 0) {
+                container.innerHTML = '<div class="glass p-3 text-center text-gray-500">No hay insumos agregados.</div>';
+                return;
+            }
+            container.innerHTML = data.insumos.map(i => `
+                <div class="glass p-3 flex justify-between items-center">
+                    <span class="text-[9px]">${i.desc}</span>
+                    <span class="text-emerald-400 font-bold">$${i.costo.toFixed(2)}</span>
+                    <button onclick="eliminarInsumo(${i.id})" class="text-red-400 text-[8px]">✖️</button>
+                </div>
+            `).join('');
+        }
+
+        function eliminarInsumo(id) {
+            data.insumos = data.insumos.filter(i => i.id !== id);
+            save();
+            renderInsumos();
+            actualizarPresupuesto();
+        }
+
+        function actualizarPresupuesto() {
+            const costoTotal = data.insumos.reduce((acc, i) => acc + i.costo, 0);
+            document.getElementById('costo-total').innerText = `$${costoTotal.toFixed(2)}`;
+            
+            const margen = parseFloat(document.getElementById('margen-slider').value);
+            document.getElementById('margen-valor').innerText = margen + '%';
+            
+            const precioVenta = costoTotal * (1 + margen / 100);
+            document.getElementById('precio-venta').innerText = `$${precioVenta.toFixed(2)}`;
+            
+            const ganancia = precioVenta - costoTotal;
+            document.getElementById('ganancia-estimada').innerText = `$${ganancia.toFixed(2)}`;
+        }
+
+        function recomendarPrecioIA() {
+            const costoTotal = data.insumos.reduce((acc, i) => acc + i.costo, 0);
+            // Simulación de IA
+            const margenRecomendado = Math.floor(Math.random() * 50) + 30; // 30% a 80%
+            const precioRecomendado = costoTotal * (1 + margenRecomendado / 100);
+            document.getElementById('ia-recomendacion').innerHTML = `
+                🤖 IA sugiere un margen del <strong>${margenRecomendado}%</strong> = <strong>$${precioRecomendado.toFixed(2)}</strong>
+            `;
+        }
+
+        // ========== RACHAS Y TOKENS ==========
         function actualizarRachas() {
             const hoy = new Date().toDateString();
             const ultima = data.rachas.ultimaActividad ? new Date(data.rachas.ultimaActividad).toDateString() : null;
 
-            if (ultima === hoy) return; // Ya registró hoy
+            if (ultima === hoy) return; // Ya actualizado hoy
 
             const ayer = new Date();
             ayer.setDate(ayer.getDate() - 1);
             const ayerStr = ayer.toDateString();
 
             if (ultima === ayerStr) {
-                // Día consecutivo
                 data.rachas.actual += 1;
                 const bonusTokens = Math.min(data.rachas.actual * 5, 50);
                 data.tokens.disponibles += bonusTokens;
@@ -437,11 +999,10 @@
                 mostrarNotificacion(`🔥 Racha de ${data.rachas.actual} días! +${bonusTokens} tokens`, 'success');
                 reproducirSonido('victoria');
             } else {
-                // Se rompió la racha
                 if (data.rachas.actual > data.rachas.maxima) {
                     data.rachas.maxima = data.rachas.actual;
                 }
-                data.rachas.actual = 1;
+                data.rachas.actual = 1; // Nuevo día, nueva racha
             }
 
             data.rachas.ultimaActividad = new Date().toISOString();
@@ -456,7 +1017,7 @@
             document.getElementById('tokens-disponibles').innerText = data.tokens.disponibles;
         }
 
-        // ========== SISTEMA DE SONIDOS ==========
+        // ========== SONIDOS ==========
         function reproducirSonido(tipo) {
             if (!data.sonidos.activados) return;
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -464,7 +1025,6 @@
             const gainNode = audioCtx.createGain();
             osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             switch(tipo) {
                 case 'victoria':
                     osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
@@ -485,7 +1045,7 @@
             }
         }
 
-        // ========== NOTIFICACIONES FLOTANTES ==========
+        // ========== NOTIFICACIONES ==========
         function mostrarNotificacion(mensaje, tipo = 'info') {
             const noti = document.createElement('div');
             noti.className = `notificacion-flotante ${tipo}`;
@@ -494,111 +1054,48 @@
             setTimeout(() => noti.remove(), 3000);
         }
 
-        // ========== GEMINI REAL CON TOKENS ==========
-        const COSTOS_IA = {
-            copy: 5,
-            research: 15,
-            strategy: 25
-        };
-
-        async function consultarGeminiReal() {
-            const query = document.getElementById('brain-query').value;
-            const modo = document.getElementById('brain-mode').value;
+        // ========== GEMINI SIMULADO ==========
+        function askBrainSimulado() {
+            const q = document.getElementById('brain-query').value;
             const r = document.getElementById('brain-response');
-
-            if (!query) return;
-
-            // Verificar tokens suficientes
-            const costo = COSTOS_IA[modo];
-            if (data.tokens.disponibles < costo) {
-                mostrarNotificacion(`❌ Necesitas ${costo} tokens. Gana más con rachas o actualiza a Élite.`, 'error');
-                return;
-            }
-
+            if (!q) return;
             r.classList.remove('hidden');
-            r.innerText = "🧠 Conectando con Gemini...";
-
-            // Construir prompt según modo
-            let prompt = "";
-            switch(modo) {
-                case 'research':
-                    prompt = `Actúa como experto en investigación de mercados. Analiza: ${query}. Da tendencias y oportunidades.`;
-                    break;
-                case 'copy':
-                    prompt = `Eres copywriter experto. Escribe un mensaje persuasivo para: ${query}. Sé profesional pero cercano.`;
-                    break;
-                case 'strategy':
-                    prompt = `Eres estratega de negocios. Para: ${query}, da análisis FODA y estrategias concretas.`;
-                    break;
-            }
-
-            try {
-                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
-                    })
-                });
-
-                const dataJson = await response.json();
-                const respuesta = dataJson.candidates[0].content.parts[0].text;
-
-                // Descontar tokens
-                data.tokens.disponibles -= costo;
-                data.tokens.totalGastados += costo;
-                save();
-                actualizarUIRachas();
-
-                reproducirSonido('victoria');
-                r.innerText = respuesta;
-
-            } catch (error) {
-                console.error('Error Gemini:', error);
-                r.innerText = "❌ Error al conectar con Gemini. Verifica tu API key.";
-            }
+            r.innerText = "🧠 Analizando... (simulación)";
+            setTimeout(() => {
+                r.innerText = "💡 Sugerencia: Basado en tu consulta, te recomiendo enfocarte en mejorar la experiencia del cliente y ofrecer valor agregado.";
+            }, 800);
         }
 
         // ========== EXPORTACIÓN PDF PREMIUM ==========
         function exportarPDFProfesional() {
             if (data.usuario.plan !== 'elite' && data.usuario.plan !== 'corp') {
-                mostrarNotificacion('📄 PDF Premium es solo para plan Élite. Actualiza en la pestaña Planes.', 'error');
+                mostrarNotificacion('📄 PDF Premium es solo para plan Élite', 'error');
                 return;
             }
-
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-
             doc.setFontSize(22);
             doc.setTextColor(100, 0, 255);
             doc.text('MASTERMIND FINANCIAL REPORT', 20, 20);
-
             doc.setFontSize(10);
             doc.setTextColor(100, 100, 100);
             doc.text(`Generado: ${new Date().toLocaleDateString()}`, 20, 30);
-
             const neta = getGananciaNeta();
             const deuda = data.deudas.reduce((a,b)=>a+b.monto,0);
-
             doc.setFontSize(14);
             doc.setTextColor(0,0,0);
             doc.text('Resumen Financiero', 20, 45);
-
             doc.setFontSize(12);
             doc.text(`Capital Real: $${neta.toFixed(2)}`, 30, 55);
             doc.text(`Por Cobrar: $${deuda.toFixed(2)}`, 30, 62);
             doc.text(`Racha Actual: ${data.rachas.actual} días 🔥`, 30, 69);
-
             doc.text('Últimos Movimientos', 20, 85);
-
             const movimientos = data.boveda.slice(-10).map(m => [
                 new Date(m.id).toLocaleDateString(),
                 m.tipo.toUpperCase(),
-                m.desc,
+                m.desc.substring(0,20),
                 `$${m.monto}`
             ]);
-
             doc.autoTable({
                 startY: 90,
                 head: [['Fecha', 'Tipo', 'Descripción', 'Monto']],
@@ -606,13 +1103,25 @@
                 theme: 'striped',
                 headStyles: { fillColor: [100, 0, 255] }
             });
-
             doc.save(`mastermind-${Date.now()}.pdf`);
             reproducirSonido('victoria');
             mostrarNotificacion('✅ PDF generado con éxito', 'success');
         }
 
-        // ========== SINCRONIZACIÓN EN NUBE (placeholder) ==========
+        // ========== EXPORTAR EXCEL ==========
+        function exportarExcel() {
+            const wb = XLSX.utils.book_new();
+            const trabajosSheet = XLSX.utils.json_to_sheet(data.trabajos.map(t => ({ Trabajo: t.descripcion })));
+            XLSX.utils.book_append_sheet(wb, trabajosSheet, "Trabajos");
+            const deudasSheet = XLSX.utils.json_to_sheet(data.deudas.map(d => ({ Cliente: d.cliente, Monto: d.monto, Concepto: d.desc })));
+            XLSX.utils.book_append_sheet(wb, deudasSheet, "Deudas");
+            const bovedaSheet = XLSX.utils.json_to_sheet(data.boveda.map(b => ({ Tipo: b.tipo, Desc: b.desc, Monto: b.monto })));
+            XLSX.utils.book_append_sheet(wb, bovedaSheet, "Boveda");
+            XLSX.writeFile(wb, "mastermind.xlsx");
+            mostrarNotificacion('📥 Excel descargado', 'success');
+        }
+
+        // ========== SINCRONIZACIÓN NUBE (simulada) ==========
         function sincronizarNube() {
             if (data.usuario.plan !== 'elite' && data.usuario.plan !== 'corp') {
                 mostrarNotificacion('☁️ Sincronización solo para plan Élite', 'error');
@@ -622,18 +1131,6 @@
             setTimeout(() => {
                 mostrarNotificacion('✅ Datos sincronizados', 'success');
             }, 2000);
-        }
-
-        // ========== PLANES ==========
-        function activarPlan(plan) {
-            if (plan === 'elite') {
-                data.usuario.plan = 'elite';
-                data.usuario.negocios = 5;
-                data.tokens.disponibles += 900; // 1000 total
-                save();
-                mostrarNotificacion('💎 ¡Bienvenido a Mastermind Élite!', 'success');
-                actualizarUIRachas();
-            }
         }
 
         // ========== MODO OSCURO/CLARO ==========
@@ -649,179 +1146,25 @@
                 closeBtnText: 'Cerrar'
             });
             driver.defineSteps([
-                { element: '#tab-misiones', popover: { title: '📋 Proyectos', description: 'Registra trabajos pendientes', position: 'bottom' } },
-                { element: '#tab-brain', popover: { title: '🧠 Cerebro IA', description: 'Usa tokens para consultar a Gemini', position: 'bottom' } },
-                { element: '#tab-planes', popover: { title: '💎 Planes', description: 'Actualiza a Élite para más beneficios', position: 'bottom' } }
+                { element: '#tab-misiones', popover: { title: '📋 Trabajos', description: 'Registra tus trabajos y al completarlos recibes ingresos.', position: 'bottom' } },
+                { element: '#tab-cobranza', popover: { title: '⚖️ Deudas', description: 'Controla el dinero que te deben y haz abonos.', position: 'bottom' } },
+                { element: '#tab-presupuesto', popover: { title: '📦 Presupuesto', description: 'Calcula costos de productos y define precios.', position: 'bottom' } },
+                { element: '#tab-misiones-sec', popover: { title: '🎯 Misiones', description: 'Completa desafíos diarios para ganar tokens.', position: 'bottom' } },
+                { element: '#tab-planes', popover: { title: '💎 Planes', description: 'Actualiza a Élite para más beneficios.', position: 'bottom' } }
             ]);
             driver.start();
         }
 
-        // ========== EXPORTAR EXCEL (gratis) ==========
-        function exportarExcel() {
-            const wb = XLSX.utils.book_new();
-            const misionesSheet = XLSX.utils.json_to_sheet(data.misiones);
-            XLSX.utils.book_append_sheet(wb, misionesSheet, "Proyectos");
-            const deudasSheet = XLSX.utils.json_to_sheet(data.deudas);
-            XLSX.utils.book_append_sheet(wb, deudasSheet, "Deudas");
-            XLSX.writeFile(wb, "mastermind.xlsx");
-            mostrarNotificacion('📥 Excel descargado', 'success');
-        }
-
-        // ========== FUNCIONES EXISTENTES (mantener todas) ==========
-        // ... aquí van todas las funciones que ya tenías (addMision, renderDeudas, etc.)
-        // Por brevedad, las omito pero DEBES MANTENERLAS todas igual que antes
-        
-        // ========== GET GANANCIA NETA ==========
-        function getGananciaNeta() {
-            const ingresosExtra = data.boveda.filter(t => t.tipo === 'ingreso').reduce((a,b)=>a+b.monto,0);
-            const gastosPersonal = data.boveda.filter(t => t.tipo === 'personal').reduce((a,b)=>a+b.monto,0);
-            const gastosEmpresa = data.boveda.filter(t => t.tipo === 'empresa').reduce((a,b)=>a+b.monto,0);
-            return (data.gananciaBase + ingresosExtra) - (gastosPersonal + gastosEmpresa);
-        }
-
-        // ========== UPDATE UI ==========
-        function updateUI() {
-            const neta = getGananciaNeta();
-            document.getElementById('ganancia-neta').innerText = neta.toFixed(2);
-            document.getElementById('total-deuda').innerText = data.deudas.reduce((a,b)=>a+b.monto,0).toFixed(2);
-            document.getElementById('label-meta-actual').innerText = `Meta: ${data.metaNombre}`;
-            let p = data.metaValor > 0 ? (neta / data.metaValor) * 100 : 0;
-            document.getElementById('meta-fill').style.width = Math.min(p, 100) + "%";
-            document.getElementById('meta-percent').innerText = Math.floor(p);
-        }
-
-        // ========== CALCULADORA (mantener) ==========
-        let calcCurrent = '0', calcStoredValue = null, calcPendingOp = null;
-        function updateCalcDisplay() { document.getElementById('calc-display').innerText = calcCurrent; }
-        function calcInput(num) {
-            if(calcCurrent === '0' && num !== '.') calcCurrent = num;
-            else calcCurrent += num;
-            updateCalcDisplay();
-        }
-        function calcSetOperator(op) {
-            if(calcStoredValue === null) {
-                calcStoredValue = parseFloat(calcCurrent);
-                calcCurrent = '0';
-                calcPendingOp = op;
-            } else { calcEquals(); calcPendingOp = op; calcStoredValue = parseFloat(calcCurrent); calcCurrent = '0'; }
-        }
-        function calcEquals() {
-            if(calcStoredValue === null || !calcPendingOp) return;
-            const current = parseFloat(calcCurrent);
-            let result = 0;
-            switch(calcPendingOp) {
-                case '+': result = calcStoredValue + current; break;
-                case '-': result = calcStoredValue - current; break;
-                case '*': result = calcStoredValue * current; break;
-                case '/': result = calcStoredValue / current; break;
+        // ========== PLANES ==========
+        function activarPlan(plan) {
+            if (plan === 'elite') {
+                data.usuario.plan = 'elite';
+                data.usuario.negocios = 5;
+                data.tokens.disponibles += 900; // total 1000
+                save();
+                mostrarNotificacion('💎 ¡Bienvenido a Mastermind Élite!', 'success');
+                actualizarUIRachas();
             }
-            calcCurrent = result.toString();
-            calcStoredValue = null; calcPendingOp = null;
-            updateCalcDisplay();
-        }
-        function calcClear() { calcCurrent = '0'; calcStoredValue = null; calcPendingOp = null; updateCalcDisplay(); }
-        function calcToCotizacion() {
-            const val = parseFloat(calcCurrent);
-            if(!isNaN(val)) document.getElementById('calc-costo').value = val;
-        }
-        function generarCotizacion() {
-            const c = parseFloat(document.getElementById('calc-costo').value);
-            const m = parseFloat(document.getElementById('calc-margen').value);
-            if(isNaN(c) || isNaN(m)) return;
-            const total = c + (c * (m/100));
-            document.getElementById('calc-display').innerText = total.toFixed(2);
-            calcCurrent = total.toFixed(2);
-        }
-
-        // ========== MISIONES (mantener) ==========
-        function addMision() {
-            const v = document.getElementById('new-mision').value; if(!v) return;
-            data.misiones.push({id: Date.now(), t: v});
-            document.getElementById('new-mision').value = ""; save(); renderMisiones();
-            actualizarRachas(); // <-- NUEVO: actualizar racha
-        }
-        function renderMisiones() {
-            document.getElementById('lista-misiones').innerHTML = data.misiones.map(m => `
-                <div class="glass p-4 flex justify-between">
-                    <span class="text-[10px] font-bold">${m.t}</span>
-                    <button onclick="finalizar(${m.id})" class="bg-indigo-600 px-3 py-1 rounded-xl text-[7px]">COBRAR</button>
-                </div>`).join('');
-        }
-        function finalizar(id) {
-            const cli = prompt("Nombre del deudor:");
-            const mon = parseFloat(prompt("Monto $"));
-            if(!cli || isNaN(mon)) return;
-            const m = data.misiones.find(x=>x.id===id);
-            data.deudas.push({id: Date.now(), cliente: cli, monto: mon, desc: m.t});
-            data.misiones = data.misiones.filter(x=>x.id!==id);
-            save(); updateUI(); renderMisiones(); renderDeudas();
-            actualizarRachas();
-        }
-
-        // ========== REGISTRAR DEUDOR DIRECTO ==========
-        function registrarDeudorDirecto() {
-            const nombre = document.getElementById('nuevo-deudor-nombre').value;
-            const monto = parseFloat(document.getElementById('nuevo-deudor-monto').value);
-            const desc = document.getElementById('nuevo-deudor-desc').value || "Sin concepto";
-            const fileInput = document.getElementById('adjunto-deudor');
-            if(!nombre || isNaN(monto) || monto <= 0) { alert("Completa datos"); return; }
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result.split(',')[1];
-                    data.deudas.push({id: Date.now(), cliente: nombre, monto, desc, adjuntoBase64: base64, adjuntoTipo: file.type});
-                    limpiarCamposDeudor();
-                    save(); updateUI(); renderDeudas();
-                    actualizarRachas();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                data.deudas.push({id: Date.now(), cliente: nombre, monto, desc});
-                limpiarCamposDeudor();
-                save(); updateUI(); renderDeudas();
-                actualizarRachas();
-            }
-        }
-        function limpiarCamposDeudor() {
-            document.getElementById('nuevo-deudor-nombre').value = "";
-            document.getElementById('nuevo-deudor-monto').value = "";
-            document.getElementById('nuevo-deudor-desc').value = "";
-            document.getElementById('adjunto-deudor').value = "";
-        }
-        function renderDeudas() {
-            document.getElementById('lista-cobranza').innerHTML = data.deudas.map(d => `
-                <div class="glass p-4 border-l-4 border-red-500 mb-2">
-                    <div class="flex justify-between"><span>${d.cliente}</span><span>$${d.monto}</span></div>
-                    <p class="text-[8px]">${d.desc}</p>
-                    ${d.adjuntoBase64 ? '<span class="text-[7px]">📎 Adjunto</span>' : ''}
-                    <div class="grid grid-cols-2 gap-2 mt-2">
-                        <button onclick="cobrarTotal(${d.id})" class="bg-green-600 py-1 rounded text-[7px]">PAGAR</button>
-                        <button onclick="abonar(${d.id})" class="bg-yellow-600 py-1 rounded text-[7px]">ABONAR</button>
-                    </div>
-                </div>`).join('');
-        }
-        function cobrarTotal(id) {
-            const d = data.deudas.find(x=>x.id===id);
-            if(!d) return;
-            data.gananciaBase += d.monto;
-            data.boveda.push({id: Date.now(), tipo: 'ingreso', desc: `Pago de ${d.cliente}`, monto: d.monto});
-            data.deudas = data.deudas.filter(x=>x.id!==id);
-            save(); updateUI(); renderDeudas(); renderBoveda();
-            reproducirSonido('cobro');
-            actualizarRachas();
-        }
-        function abonar(id) {
-            const d = data.deudas.find(x=>x.id===id);
-            if(!d) return;
-            const montoAbono = parseFloat(prompt("Monto del abono? $"));
-            if(isNaN(montoAbono) || montoAbono <= 0) return;
-            if(montoAbono >= d.monto) { cobrarTotal(id); return; }
-            d.monto -= montoAbono;
-            data.boveda.push({id: Date.now(), tipo: 'ingreso', desc: `Abono de ${d.cliente}`, monto: montoAbono});
-            save(); updateUI(); renderDeudas(); renderBoveda();
-            actualizarRachas();
         }
 
         // ========== ESPÍA ==========
@@ -829,17 +1172,20 @@
             const n = document.getElementById('spy-negocio').value;
             const it = document.getElementById('spy-item').value;
             const pr = parseFloat(document.getElementById('spy-precio').value);
-            if(!n || !it || isNaN(pr)) return;
-            data.espia.unshift({n, it, pr});
-            save(); renderSpy();
+            if (!n || !it || isNaN(pr)) return;
+            data.espia.unshift({ n, it, pr });
+            save();
+            renderSpy();
             actualizarRachas();
+            completarMisionPorAccion('Analiza competencia');
         }
         function renderSpy() {
             document.getElementById('lista-espia').innerHTML = data.espia.map(s => `
-                <div class="glass p-4">
-                    <p class="text-[8px] font-bold">${s.n}</p>
+                <div class="glass p-4 border-l-4 border-cyan-500">
+                    <p class="text-[8px] font-bold text-cyan-400">${s.n}</p>
                     <p class="text-[10px]">${s.it} - $${s.pr}</p>
-                </div>`).join('');
+                </div>
+            `).join('');
         }
 
         // ========== BÓVEDA ==========
@@ -847,10 +1193,16 @@
             const tipo = document.getElementById('tipo-transaccion').value;
             const desc = document.getElementById('boveda-desc').value;
             const monto = parseFloat(document.getElementById('boveda-monto').value);
-            if(!desc || isNaN(monto)) return;
-            data.boveda.push({id: Date.now(), tipo, desc, monto});
-            save(); renderBoveda(); updateUI();
+            if (!desc || isNaN(monto)) return;
+            data.boveda.push({ id: Date.now(), tipo, desc, monto });
+            save();
+            renderBoveda();
+            updateUI();
+            runIA();
             actualizarRachas();
+            if (tipo === 'personal' || tipo === 'empresa') {
+                completarMisionPorAccion('Registra un gasto');
+            }
         }
         function renderBoveda() {
             const filtroTexto = document.getElementById('filtro-boveda')?.value.toLowerCase() || '';
@@ -862,10 +1214,10 @@
             document.getElementById('lista-boveda').innerHTML = items.map(t => {
                 let badgeClass = t.tipo === 'personal' ? 'badge-personal' : (t.tipo === 'empresa' ? 'badge-empresa' : 'badge-ingreso');
                 let signo = t.tipo === 'ingreso' ? '+' : '-';
-                return `<div class="glass p-3 flex justify-between text-[9px]">
+                return `<div class="glass p-3 flex justify-between items-center text-[9px]">
                     <span class="badge ${badgeClass}">${t.tipo}</span>
-                    <span>${t.desc}</span>
-                    <span class="${t.tipo==='ingreso'?'text-green-400':'text-red-400'}">${signo}$${t.monto}</span>
+                    <span class="truncate max-w-[120px]">${t.desc}</span>
+                    <span class="${t.tipo==='ingreso'?'text-green-400':'text-red-400'} font-bold">${signo}$${t.monto.toFixed(2)}</span>
                 </div>`;
             }).join('');
         }
@@ -875,9 +1227,10 @@
             const d = document.getElementById('a-d').value;
             const f = document.getElementById('a-fecha').value;
             const h = document.getElementById('a-h').value;
-            if(!d || !f || !h) return;
-            data.alarmas.push({d, f, h});
-            save(); renderAlarmas();
+            if (!d || !f || !h) return;
+            data.alarmas.push({ d, f, h });
+            save();
+            renderAlarmas();
             programarNotificacion(d, f, h);
             actualizarRachas();
         }
@@ -896,16 +1249,65 @@
         function renderAlarmas() {
             document.getElementById('lista-alarmas').innerHTML = data.alarmas.map(a => `
                 <div class="glass p-3 flex justify-between text-[9px]">
-                    <span>📅 ${a.f} ${a.h}</span>
-                    <span>${a.d}</span>
-                </div>`).join('');
+                    <span>📅 ${a.f} | <b>${a.h}</b></span>
+                    <span class="text-orange-400">${a.d}</span>
+                </div>
+            `).join('');
         }
 
         // ========== META ==========
         function setMeta() {
             data.metaNombre = document.getElementById('m-n').value;
             data.metaValor = parseFloat(document.getElementById('m-v').value);
-            save(); updateUI();
+            save();
+            updateUI();
+            runIA();
+        }
+
+        // ========== CALCULADORA ==========
+        let calcCurrent = '0';
+        let calcStoredValue = null;
+        let calcPendingOp = null;
+        function updateCalcDisplay() { document.getElementById('calc-display').innerText = calcCurrent; }
+        function calcInput(num) {
+            if (calcCurrent === '0' && num !== '.') calcCurrent = num;
+            else calcCurrent += num;
+            updateCalcDisplay();
+        }
+        function calcSetOperator(op) {
+            if (calcStoredValue === null) {
+                calcStoredValue = parseFloat(calcCurrent);
+                calcCurrent = '0';
+                calcPendingOp = op;
+            } else { calcEquals(); calcPendingOp = op; calcStoredValue = parseFloat(calcCurrent); calcCurrent = '0'; }
+        }
+        function calcEquals() {
+            if (calcStoredValue === null || !calcPendingOp) return;
+            const current = parseFloat(calcCurrent);
+            let result = 0;
+            switch (calcPendingOp) {
+                case '+': result = calcStoredValue + current; break;
+                case '-': result = calcStoredValue - current; break;
+                case '*': result = calcStoredValue * current; break;
+                case '/': result = calcStoredValue / current; break;
+            }
+            calcCurrent = result.toString();
+            calcStoredValue = null; calcPendingOp = null;
+            updateCalcDisplay();
+            completarMisionPorAccion('Usa la calculadora');
+        }
+        function calcClear() { calcCurrent = '0'; calcStoredValue = null; calcPendingOp = null; updateCalcDisplay(); }
+        function calcToCotizacion() {
+            const val = parseFloat(calcCurrent);
+            if (!isNaN(val)) document.getElementById('calc-costo').value = val;
+        }
+        function generarCotizacion() {
+            const c = parseFloat(document.getElementById('calc-costo').value);
+            const m = parseFloat(document.getElementById('calc-margen').value);
+            if (isNaN(c) || isNaN(m)) return;
+            const total = c + (c * (m/100));
+            document.getElementById('calc-display').innerText = total.toFixed(2);
+            calcCurrent = total.toFixed(2);
         }
 
         // ========== REPORTES ==========
@@ -913,7 +1315,6 @@
             const totalPersonal = data.boveda.filter(t=>t.tipo==='personal').reduce((a,b)=>a+b.monto,0);
             const totalEmpresa = data.boveda.filter(t=>t.tipo==='empresa').reduce((a,b)=>a+b.monto,0);
             const totalIngreso = data.boveda.filter(t=>t.tipo==='ingreso').reduce((a,b)=>a+b.monto,0);
-            
             const ctxTorta = document.getElementById('grafico-torta').getContext('2d');
             if (window.chartTorta) window.chartTorta.destroy();
             window.chartTorta = new Chart(ctxTorta, {
@@ -927,13 +1328,17 @@
                 }
             });
 
-            const fechas = [], valores = [];
+            // Línea de tiempo (últimos 7 días simulados)
+            const fechas = [];
+            const valores = [];
             const hoy = new Date();
             for (let i = 6; i >= 0; i--) {
                 let d = new Date(hoy);
                 d.setDate(d.getDate() - i);
-                fechas.push(d.toLocaleDateString());
-                valores.push((data.gananciaBase * (0.8 + i*0.05) + Math.random()*50).toFixed(0));
+                fechas.push(d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }));
+                // Simulación de ganancia neta diaria (variación aleatoria)
+                let val = getGananciaNeta() * (0.7 + i*0.05) + (Math.random()*50 - 25);
+                valores.push(val.toFixed(0));
             }
             const ctxLinea = document.getElementById('grafico-linea').getContext('2d');
             if (window.chartLinea) window.chartLinea.destroy();
@@ -944,11 +1349,31 @@
                     datasets: [{
                         label: 'Ganancia Neta ($)',
                         data: valores,
-                        borderColor: '#ec4899'
+                        borderColor: '#ec4899',
+                        backgroundColor: 'rgba(236,72,153,0.1)',
+                        tension: 0.2
                     }]
                 }
             });
         }
+
+        // ========== UPDATE UI ==========
+        function updateUI() {
+            const neta = getGananciaNeta();
+            document.getElementById('ganancia-neta').innerText = neta.toFixed(2);
+            document.getElementById('total-deuda').innerText = data.deudas.reduce((a,b)=>a+b.monto,0).toFixed(2);
+            document.getElementById('label-meta-actual').innerText = `Meta: ${data.metaNombre}`;
+            let p = data.metaValor > 0 ? (neta / data.metaValor) * 100 : 0;
+            document.getElementById('meta-fill').style.width = Math.min(p, 100) + "%";
+            document.getElementById('meta-percent').innerText = Math.floor(p);
+        }
+
+        // Inicializar slider de presupuesto
+        document.addEventListener('input', function(e) {
+            if (e.target.id === 'margen-slider') {
+                actualizarPresupuesto();
+            }
+        });
     </script>
 </body>
 </html>
