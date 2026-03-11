@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mastermind v41 CORREGIDA 🧠✨</title>
+    <title>Mastermind v42 💀 ELITE</title>
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fuente -->
@@ -16,6 +16,8 @@
     <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
         body {
             font-family: 'JetBrains Mono', monospace;
@@ -46,6 +48,10 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
         }
+        .glass:hover {
+            border-color: rgba(168, 85, 247, 0.6);
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.3);
+        }
 
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .active-tab { display: block; }
@@ -64,7 +70,7 @@
         }
         input:focus, select:focus, textarea:focus {
             border-color: #a855f7 !important;
-            box-shadow: 0 0 15px #a855f7;
+            box-shadow: 0 0 20px #a855f7;
             outline: none;
         }
 
@@ -85,7 +91,7 @@
         .btn-action:active {
             transform: scale(0.96);
             filter: brightness(1.3);
-            box-shadow: 0 4px 20px #a855f7;
+            box-shadow: 0 4px 25px #a855f7;
         }
 
         .badge {
@@ -100,7 +106,6 @@
         .badge-plata { background: #94a3b8; color: black; }
         .badge-bronce { background: #b45309; color: white; }
 
-        /* Mascota IA */
         .mascota-badge {
             display: inline-flex;
             align-items: center;
@@ -111,13 +116,17 @@
             border: 1px solid #a855f7;
             font-size: 12px;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mascota-badge:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 0 15px #f59e0b;
         }
         .mascota-emoji {
             font-size: 28px;
             filter: drop-shadow(0 0 8px #a855f7);
         }
 
-        /* Cofre diario */
         .cofre-btn {
             background: linear-gradient(145deg, #b45309, #f59e0b);
             border: none;
@@ -138,7 +147,6 @@
             100% { box-shadow: 0 0 15px #f59e0b; }
         }
 
-        /* Calculadora Neon */
         .calc-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -218,13 +226,42 @@
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(20, 20, 40, 0.95);
+            color: #fff;
+            text-align: center;
+            border-radius: 10px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #a855f7;
+            font-size: 10px;
+            pointer-events: none;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="p-4">
 
-    <!-- HEADER RESTAURADO CON MASCOTA Y COFRE INTEGRADOS -->
+    <!-- HEADER -->
     <header class="glass p-6 mb-4">
-        <!-- Fila superior: capital y mascota -->
         <div class="flex justify-between items-center mb-4">
             <div>
                 <p class="text-[7px] text-indigo-400 font-bold uppercase tracking-wider">Capital Neto</p>
@@ -232,25 +269,28 @@
                     $<span id="ganancia-neta">0.00</span>
                 </p>
             </div>
-            <div class="mascota-badge" onclick="mostrarMensajeMascotaClick()">
-                <span class="mascota-emoji" id="mascota-emoji">😊</span>
-                <span id="mascota-mensaje" class="text-[10px] max-w-[150px]">¡Hola! Soy tu asistente.</span>
+            <div class="flex items-center gap-3">
+                <div class="mascota-badge" onclick="mostrarMensajeMascotaClick()">
+                    <span class="mascota-emoji" id="mascota-emoji">😊</span>
+                    <span id="mascota-mensaje" class="text-[10px] max-w-[150px]">¡Hola! Soy tu asistente.</span>
+                </div>
+                <button id="mute-btn" onclick="toggleMute()" class="glass px-3 py-2 text-sm">🔊</button>
             </div>
         </div>
 
-        <!-- Segunda fila: por cobrar y por pagar -->
         <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <p class="text-[7px] text-red-400 font-bold uppercase">Por cobrar</p>
+            <div class="tooltip">
+                <span class="text-[7px] text-red-400 font-bold uppercase">Por cobrar ℹ️</span>
+                <span class="tooltiptext">Dinero que te deben. ¡A cobrar!</span>
                 <p class="text-2xl font-bold text-red-400">$<span id="total-deuda">0.00</span></p>
             </div>
-            <div>
-                <p class="text-[7px] text-yellow-400 font-bold uppercase">Por pagar</p>
+            <div class="tooltip">
+                <span class="text-[7px] text-yellow-400 font-bold uppercase">Por pagar ℹ️</span>
+                <span class="tooltiptext">Tus deudas y gastos fijos.</span>
                 <p class="text-2xl font-bold text-yellow-400">$<span id="total-pagar">0.00</span></p>
             </div>
         </div>
 
-        <!-- Barra de meta y racha -->
         <div class="flex justify-between text-[9px] font-bold mb-1 text-gray-400">
             <span id="label-meta-actual">Meta: Sin Definir</span>
             <span>🔥 Racha <span id="racha-actual">0</span></span>
@@ -259,7 +299,6 @@
             <div id="meta-fill" class="progress-fill h-full bg-gradient-to-r from-indigo-500 to-purple-600" style="width: 0%"></div>
         </div>
 
-        <!-- Botones de acción + cofre -->
         <div class="flex flex-wrap gap-2 justify-between items-center">
             <div class="flex gap-2">
                 <button onclick="toggleModo()" class="glass px-4 py-2 text-[10px] rounded-2xl hover:bg-white/10">🌓 Modo</button>
@@ -273,7 +312,7 @@
         </div>
     </header>
 
-    <!-- NAV (13 pestañas) -->
+    <!-- NAV -->
     <nav class="grid grid-cols-7 gap-2 mb-8">
         <button onclick="tab('misiones')" class="nav-btn">📋 Trabajos</button>
         <button onclick="tab('cobrar')" class="nav-btn text-red-400">💰 Por cobrar</button>
@@ -291,13 +330,19 @@
     </nav>
 
     <!-- ========== PESTAÑAS ========== -->
+
     <!-- TRABAJOS -->
     <div id="tab-misiones" class="tab-content active-tab">
         <div class="ia-box p-5 mb-4 glass border-l-4 border-indigo-500">
             <p class="text-[8px] font-black text-indigo-400">🤖 Mastermind IA</p>
             <p id="ia-inicio" class="text-[11px] italic">Cargando...</p>
         </div>
-        <div id="lista-trabajos" class="space-y-3 mb-6"></div>
+        <div class="mb-4">
+            <h3 class="text-xs font-bold text-indigo-400 mb-2">⏳ Trabajos Pendientes</h3>
+            <div id="lista-trabajos-pendientes" class="space-y-3 mb-4"></div>
+            <h3 class="text-xs font-bold text-green-400 mb-2">✅ Trabajos Completados</h3>
+            <div id="lista-trabajos-completados" class="space-y-3 mb-4"></div>
+        </div>
         <div class="glass p-5">
             <input id="new-trabajo" type="text" placeholder="Ej: Diseñar logo">
             <button onclick="addTrabajo()" class="btn-action">➕ Registrar Trabajo</button>
@@ -486,30 +531,49 @@
                 <h3 class="text-sm font-bold">GRATUITO</h3>
                 <p class="text-2xl font-bold my-2">$0</p>
                 <ul class="text-[9px] space-y-2">
-                    <li>✓ 100 tokens/mes</li>
+                    <li>✓ 1 negocio</li>
+                    <li>✓ 50 transacciones/mes</li>
+                    <li>✓ IA básica</li>
                     <li>✗ Sin backups</li>
+                    <li>✗ Sin PDF personalizado</li>
                 </ul>
                 <button class="btn-action mt-4" disabled>Actual</button>
             </div>
-            <div class="glass p-5 border-2 border-yellow-500">
+            <div class="glass p-5 border-2 border-yellow-500 transform scale-105">
                 <h3 class="text-sm font-bold text-yellow-500">ÉLITE</h3>
-                <p class="text-2xl font-bold my-2">$4.99/mes</p>
-                <ul class="text-[9px] space-y-2">
-                    <li>✓ 1000 tokens/mes</li>
+                <p class="text-2xl font-bold my-2">$2.99/mes</p>
+                <p class="text-sm text-gray-400">o $29.99/año (ahorra 16%)</p>
+                <ul class="text-[9px] space-y-2 mt-2">
+                    <li>✓ Negocios ilimitados</li>
+                    <li>✓ Transacciones ilimitadas</li>
+                    <li>✓ IA predictiva completa</li>
                     <li>✓ Backups automáticos</li>
-                    <li>✓ PDF personalizado</li>
+                    <li>✓ PDF personalizado con logo</li>
+                    <li>✓ Soporte prioritario</li>
                 </ul>
                 <button onclick="activarPlan('elite')" class="btn-action mt-4 bg-yellow-600">ACTUALIZAR</button>
+            </div>
+            <div class="glass p-5 border-2 border-purple-700">
+                <h3 class="text-sm font-bold text-purple-500">CORPORATIVO</h3>
+                <p class="text-2xl font-bold my-2">$19.99/mes</p>
+                <ul class="text-[9px] space-y-2">
+                    <li>✓ Todo lo de Élite</li>
+                    <li>✓ API acceso</li>
+                    <li>✓ 10 usuarios incluidos</li>
+                    <li>✓ Gerente de cuenta</li>
+                </ul>
+                <button onclick="activarPlan('corp')" class="btn-action mt-4 bg-purple-800">CONTACTAR</button>
             </div>
         </div>
     </div>
 
     <script>
         // ========== DATA ==========
-        let data = JSON.parse(localStorage.getItem('biz-god-v41')) || {
+        let data = JSON.parse(localStorage.getItem('biz-god-v42')) || {
             ingresosTrabajos: 0,
             metaNombre: "Sin Meta", metaValor: 0,
-            trabajos: [],
+            trabajos: [], // { id, descripcion, completado: false, fechaEntrega? }
+            trabajosCompletados: [],
             porCobrar: [],
             porPagar: [],
             espia: [],
@@ -527,10 +591,10 @@
             ],
             fechaUltimaMision: new Date().toDateString(),
             logros: [
-                { id:1, nombre:"Primer Trabajo", desc:"Completa 1 trabajo", criterio: d=>d.trabajosCompletados>=1, recompensa:20, icono:"✅", completado:false },
-                { id:2, nombre:"Cazador de Deudas", desc:"Cobra 5 deudas", criterio: d=>d.deudasCobradas>=5, recompensa:50, icono:"💰", completado:false }
+                { id:1, nombre:"Primer Trabajo", desc:"Completa 1 trabajo", criterio: d=>d.trabajosCompletados.length>=1, recompensa:20, icono:"✅", completado:false },
+                { id:2, nombre:"Cazador de Deudas", desc:"Cobra 5 deudas", criterio: d=>d.deudasCobradas>=5, recompensa:50, icono:"💰", completado:false },
+                { id:3, nombre:"Racha de 7 días", desc:"Mantené 7 días de racha", criterio: d=>d.rachas.maxima>=7, recompensa:100, icono:"🔥", completado:false }
             ],
-            trabajosCompletados: 0,
             deudasCobradas: 0,
             cofreDisponible: true,
             ultimoCofre: null
@@ -540,7 +604,6 @@
         function tab(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
             document.getElementById('tab-' + t).classList.add('active-tab');
-            // Renderizar contenido específico al cambiar de pestaña
             if (t === 'cobrar') renderPorCobrar();
             if (t === 'pagar') renderPorPagar();
             if (t === 'espia') { renderSpy(); renderGraficoEspia(); }
@@ -560,7 +623,6 @@
                 data.fechaUltimaMision = hoy;
             }
             if (data.ultimoCofre !== hoy) data.cofreDisponible = true;
-            // Renderizar todo al inicio
             updateUI();
             renderTrabajos();
             renderPorCobrar();
@@ -579,7 +641,7 @@
             }, 60000);
         };
 
-        function save() { localStorage.setItem('biz-god-v41', JSON.stringify(data)); }
+        function save() { localStorage.setItem('biz-god-v42', JSON.stringify(data)); }
 
         // ========== MASCOTA IA ==========
         function actualizarMascota() {
@@ -626,76 +688,93 @@
             save();
         }
 
-        // ========== IA PROACTIVA ==========
-        function enviarNotificacionesPredictivas() {
-            // Gastos en café
-            const gastosCafe = data.boveda.filter(t => t.desc.toLowerCase().includes('café') || t.desc.toLowerCase().includes('cafe'));
-            const totalCafe = gastosCafe.reduce((a,b)=>a+b.monto,0);
-            if (totalCafe > 30) {
-                mostrarMensajeMascota(`☕ Llevas $${totalCafe} en café este mes. ¿Podrías ahorrar?`);
-            }
-
-            // Deudas por cobrar con 3 días
-            const hoy = new Date();
-            data.porCobrar.forEach(d => {
-                if (d.cobrado) return;
-                const fecha = new Date(d.fecha);
-                const diff = Math.floor((hoy - fecha) / (1000*60*60*24));
-                if (diff === 3 && !d.notificado) {
-                    mostrarMensajeMascota(`🔔 La deuda de ${d.deudor} lleva 3 días. ¿Le recuerdo?`);
-                    d.notificado = true;
-                }
-            });
-
-            // Cuentas por pagar próximas a vencer
-            data.porPagar.forEach(p => {
-                if (p.pagado) return;
-                const fecha = new Date(p.fecha);
-                const diff = Math.floor((fecha - hoy) / (1000*60*60*24));
-                if (diff === 1 && !p.notificado) {
-                    mostrarMensajeMascota(`⏰ Mañana vence el pago a ${p.proveedor} por $${p.monto}.`);
-                    p.notificado = true;
-                }
-            });
+        // ========== SONIDOS Y MUTE ==========
+        function toggleMute() {
+            data.sonidos.activados = !data.sonidos.activados;
+            const btn = document.getElementById('mute-btn');
+            btn.innerText = data.sonidos.activados ? '🔊' : '🔇';
             save();
+            mostrarNotificacion(data.sonidos.activados ? 'Sonidos activados' : 'Sonidos silenciados', 'info');
         }
 
-        function mostrarMensajeMascota(texto) {
-            document.getElementById('mascota-mensaje').innerText = texto;
-            setTimeout(() => actualizarMascota(), 5000);
+        function reproducirSonido(tipo) {
+            if (!data.sonidos.activados) return;
+            const ctx = new (window.AudioContext)();
+            const osc = ctx.createOscillator();
+            osc.connect(ctx.destination);
+            osc.frequency.value = tipo === 'cobro' ? 440 : 660;
+            osc.start();
+            osc.stop(0.2);
+        }
+
+        // ========== CONFETTI ==========
+        function lanzarConfeti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
         }
 
         // ========== TRABAJOS ==========
         function addTrabajo() {
             const desc = document.getElementById('new-trabajo').value;
             if (!desc) return;
-            data.trabajos.push({ id: Date.now(), descripcion: desc });
+            data.trabajos.push({ id: Date.now(), descripcion: desc, completado: false });
             document.getElementById('new-trabajo').value = "";
             save(); renderTrabajos(); actualizarRachas();
         }
+
         function renderTrabajos() {
-            const c = document.getElementById('lista-trabajos');
-            if (!data.trabajos.length) { c.innerHTML = '<div class="glass p-4 text-center">Sin trabajos.</div>'; return; }
-            c.innerHTML = data.trabajos.map(t => `
-                <div class="glass p-4 flex justify-between">
-                    <span>${t.descripcion}</span>
-                    <button onclick="completarTrabajo(${t.id})" class="bg-indigo-600 px-4 py-2 rounded-xl">✅ Completar</button>
-                </div>
-            `).join('');
+            const pendientes = document.getElementById('lista-trabajos-pendientes');
+            const completados = document.getElementById('lista-trabajos-completados');
+            
+            const pend = data.trabajos.filter(t => !t.completado);
+            const comp = data.trabajosCompletados || [];
+
+            if (pend.length === 0) {
+                pendientes.innerHTML = '<div class="glass p-4 text-center text-gray-500">No hay trabajos pendientes.</div>';
+            } else {
+                pendientes.innerHTML = pend.map(t => `
+                    <div class="glass p-4 flex justify-between items-center border-l-4 border-indigo-500">
+                        <span>${t.descripcion}</span>
+                        <button onclick="completarTrabajo(${t.id})" class="bg-indigo-600 px-4 py-2 rounded-xl text-[8px] hover:bg-indigo-700">✅ Completar</button>
+                    </div>
+                `).join('');
+            }
+
+            if (comp.length === 0) {
+                completados.innerHTML = '<div class="glass p-4 text-center text-gray-500">Aún no has completado ningún trabajo.</div>';
+            } else {
+                completados.innerHTML = comp.slice(-5).reverse().map(t => `
+                    <div class="glass p-3 flex justify-between items-center border-l-4 border-green-500 opacity-75">
+                        <span class="text-[9px]">${t.descripcion}</span>
+                        <span class="text-[8px] text-green-400">$${t.monto || 0}</span>
+                    </div>
+                `).join('');
+            }
         }
+
         function completarTrabajo(id) {
             const t = data.trabajos.find(t => t.id === id);
             if (!t) return;
             const monto = parseFloat(prompt("Monto cobrado? $"));
             if (isNaN(monto) || monto <= 0) return;
+            
+            t.completado = true;
+            t.monto = monto;
             data.ingresosTrabajos += monto;
             data.boveda.push({ id: Date.now(), tipo: 'ingreso', desc: `Trabajo: ${t.descripcion}`, monto });
+            
+            if (!data.trabajosCompletados) data.trabajosCompletados = [];
+            data.trabajosCompletados.push({ ...t, fecha: new Date().toISOString() });
             data.trabajos = data.trabajos.filter(w => w.id !== id);
-            data.trabajosCompletados++;
+            
             verificarLogros();
             completarMision('Completa un trabajo');
             save(); renderTrabajos(); renderBoveda(); updateUI(); actualizarRachas();
             mostrarNotificacion(`💰 +$${monto}`, 'success');
+            reproducirSonido('cobro');
         }
 
         // ========== POR COBRAR ==========
@@ -741,6 +820,7 @@
             verificarLogros();
             completarMision('Cobra una deuda');
             save(); renderPorCobrar(); renderBoveda(); updateUI(); actualizarRachas();
+            reproducirSonido('cobro');
         }
 
         // ========== POR PAGAR ==========
@@ -953,14 +1033,18 @@
 
         // ========== LOGROS ==========
         function verificarLogros() {
+            let nuevoLogro = false;
             data.logros.forEach(l => {
                 if (!l.completado && l.criterio(data)) {
                     l.completado = true;
                     data.tokens.disponibles += l.recompensa;
                     mostrarNotificacion(`🏆 Logro: ${l.nombre} +${l.recompensa}🪙`, 'success');
+                    lanzarConfeti();
+                    nuevoLogro = true;
                 }
             });
-            save(); renderLogros();
+            if (nuevoLogro) save();
+            renderLogros();
         }
         function renderLogros() {
             const c = document.getElementById('lista-logros');
@@ -984,12 +1068,53 @@
                 const bonus = Math.min(data.rachas.actual * 5, 50);
                 data.tokens.disponibles += bonus;
                 mostrarNotificacion(`🔥 Racha ${data.rachas.actual} días! +${bonus}🪙`, 'success');
-            } else data.rachas.actual = 1;
+            } else if (ult !== null) {
+                data.rachas.actual = 1;
+            } else {
+                data.rachas.actual = 1;
+            }
             data.rachas.ultimaActividad = new Date().toISOString();
+            verificarLogros();
             save(); actualizarUIRachas(); actualizarMascota();
         }
         function actualizarUIRachas() {
             document.getElementById('racha-actual').innerText = data.rachas.actual;
+        }
+
+        // ========== IA PROACTIVA ==========
+        function enviarNotificacionesPredictivas() {
+            const gastosCafe = data.boveda.filter(t => t.desc.toLowerCase().includes('café') || t.desc.toLowerCase().includes('cafe'));
+            const totalCafe = gastosCafe.reduce((a,b)=>a+b.monto,0);
+            if (totalCafe > 30) {
+                mostrarMensajeMascota(`☕ Llevas $${totalCafe} en café este mes. ¿Podrías ahorrar?`);
+            }
+
+            const hoy = new Date();
+            data.porCobrar.forEach(d => {
+                if (d.cobrado) return;
+                const fecha = new Date(d.fecha);
+                const diff = Math.floor((hoy - fecha) / (1000*60*60*24));
+                if (diff === 3 && !d.notificado) {
+                    mostrarMensajeMascota(`🔔 La deuda de ${d.deudor} lleva 3 días. ¿Le recuerdo?`);
+                    d.notificado = true;
+                }
+            });
+
+            data.porPagar.forEach(p => {
+                if (p.pagado) return;
+                const fecha = new Date(p.fecha);
+                const diff = Math.floor((fecha - hoy) / (1000*60*60*24));
+                if (diff === 1 && !p.notificado) {
+                    mostrarMensajeMascota(`⏰ Mañana vence el pago a ${p.proveedor} por $${p.monto}.`);
+                    p.notificado = true;
+                }
+            });
+            save();
+        }
+
+        function mostrarMensajeMascota(texto) {
+            document.getElementById('mascota-mensaje').innerText = texto;
+            setTimeout(() => actualizarMascota(), 5000);
         }
 
         // ========== REPORTES ==========
@@ -1003,7 +1128,7 @@
                 type: 'pie',
                 data: { labels: ['Personal','Empresa','Ingreso'], datasets: [{ data: [pers,emp,ing], backgroundColor: ['#f97316','#3b82f6','#22c55e'] }] }
             });
-            // línea simple
+
             const fechas = [], valores = [];
             for (let i=6;i>=0;i--) {
                 let d = new Date(); d.setDate(d.getDate()-i);
@@ -1041,53 +1166,7 @@
             document.getElementById('meta-fill').style.width = Math.min(p,100)+'%';
         }
 
-        // ========== ACCIONES DE BARRA ==========
-        function toggleModo() { document.body.classList.toggle('light-mode'); }
-        function exportarExcel() {
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.trabajos), 'Trabajos');
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.porCobrar), 'PorCobrar');
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.porPagar), 'PorPagar');
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.boveda), 'Boveda');
-            XLSX.writeFile(wb, 'mastermind.xlsx');
-            mostrarNotificacion('📥 Excel exportado', 'success');
-        }
-        function exportarPDFPersonalizado() {
-            if (data.usuario.plan !== 'elite') {
-                mostrarNotificacion('PDF personalizado solo para Élite', 'error'); return;
-            }
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.addImage('https://via.placeholder.com/50x50/4f46e5/ffffff?text=LOGO', 'PNG', 10, 10, 30, 30);
-            doc.setFontSize(20); doc.text('Reporte Mastermind', 50, 30);
-            doc.autoTable({ startY: 50, head: [['Concepto','Monto']], body: data.boveda.slice(-10).map(i=>[i.desc, i.monto]) });
-            doc.save('reporte.pdf');
-            mostrarNotificacion('✅ PDF generado', 'success');
-        }
-        function sincronizarNube() {
-            if (data.usuario.plan !== 'elite') {
-                mostrarNotificacion('Backup solo para Élite', 'error'); return;
-            }
-            mostrarNotificacion('☁️ Respaldo simulado', 'info');
-        }
-        function programarBackupAutomatico() {
-            if (data.usuario.plan === 'elite') {
-                setInterval(() => console.log('Backup automático'), 3600000);
-            }
-        }
-        function activarPlan(p) {
-            if (p === 'elite') { data.usuario.plan = 'elite'; data.tokens.disponibles += 900; save(); mostrarNotificacion('💎 Plan Élite activado', 'success'); }
-        }
-
-        function mostrarNotificacion(msg, tipo='info') {
-            const n = document.createElement('div');
-            n.className = `notificacion-flotante ${tipo}`;
-            n.innerText = msg;
-            document.body.appendChild(n);
-            setTimeout(() => n.remove(), 3000);
-        }
-
-        // IA de inicio (para la pestaña trabajos)
+        // ========== IA DE INICIO ==========
         function runIA() {
             const ia = document.getElementById('ia-inicio');
             let msj = "";
@@ -1100,6 +1179,58 @@
                 msj += `Meta: faltan $${falta > 0 ? falta.toFixed(2) : 0}.`;
             } else msj += "Define una meta.";
             ia.innerHTML = msj;
+        }
+
+        // ========== ACCIONES DE BARRA ==========
+        function toggleModo() { document.body.classList.toggle('light-mode'); }
+        function exportarExcel() {
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.trabajos), 'Trabajos');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.porCobrar), 'PorCobrar');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.porPagar), 'PorPagar');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.boveda), 'Boveda');
+            XLSX.writeFile(wb, 'mastermind.xlsx');
+            mostrarNotificacion('📥 Excel exportado', 'success');
+        }
+        function exportarPDFPersonalizado() {
+            if (data.usuario.plan !== 'elite' && data.usuario.plan !== 'corp') {
+                mostrarNotificacion('PDF personalizado solo para Élite', 'error'); return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.addImage('https://via.placeholder.com/50x50/4f46e5/ffffff?text=LOGO', 'PNG', 10, 10, 30, 30);
+            doc.setFontSize(20); doc.text('Reporte Mastermind', 50, 30);
+            doc.autoTable({ startY: 50, head: [['Concepto','Monto']], body: data.boveda.slice(-10).map(i=>[i.desc, i.monto]) });
+            doc.save('reporte.pdf');
+            mostrarNotificacion('✅ PDF generado', 'success');
+        }
+        function sincronizarNube() {
+            if (data.usuario.plan !== 'elite' && data.usuario.plan !== 'corp') {
+                mostrarNotificacion('Backup solo para Élite', 'error'); return;
+            }
+            mostrarNotificacion('☁️ Respaldo automático (próximamente)', 'info');
+        }
+        function programarBackupAutomatico() {
+            if (data.usuario.plan === 'elite') {
+                setInterval(() => console.log('Backup automático ejecutado'), 3600000);
+            }
+        }
+        function activarPlan(p) {
+            if (p === 'elite') { 
+                data.usuario.plan = 'elite'; 
+                data.tokens.disponibles += 900; 
+                save(); 
+                mostrarNotificacion('💎 Plan Élite activado', 'success');
+                lanzarConfeti();
+            }
+        }
+
+        function mostrarNotificacion(msg, tipo='info') {
+            const n = document.createElement('div');
+            n.className = `notificacion-flotante ${tipo}`;
+            n.innerText = msg;
+            document.body.appendChild(n);
+            setTimeout(() => n.remove(), 3000);
         }
 
         document.addEventListener('input', e => { if (e.target.id === 'margen-slider') actualizarPresupuesto(); });
